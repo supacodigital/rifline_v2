@@ -1,0 +1,98 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height) - 120px);
+  padding: var(--spacing-12) var(--spacing-6);
+  text-align: center;
+}
+
+.code {
+  font-size: 7rem;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: var(--spacing-6);
+  opacity: 0.15;
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: var(--spacing-3);
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  max-width: 400px;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-8);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.btnPrimary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.btnOutline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .code {
+    font-size: 5rem;
+  }
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btnPrimary,
+  .btnOutline {
+    justify-content: center;
+  }
+}

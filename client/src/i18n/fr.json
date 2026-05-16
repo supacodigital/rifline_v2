@@ -1,0 +1,233 @@
+{
+  "nav": {
+    "catalogue": "Catalogue",
+    "search": "Rechercher un produit...",
+    "account": "Mon compte",
+    "orders": "Mes commandes",
+    "admin": "Administration",
+    "logout": "Déconnexion",
+    "login": "Se connecter"
+  },
+  "hero": {
+    "slide1": {
+      "eyebrow": "Nouveautés disponibles",
+      "title": "Le shopping,",
+      "accent": "simplifié",
+      "sub": "Des milliers de produits soigneusement sélectionnés. Commandez en quelques clics, livré chez vous.",
+      "cta": "Explorer le catalogue"
+    },
+    "slide2": {
+      "eyebrow": "Livraison partout dans le monde",
+      "title": "Livré où",
+      "accent": "vous voulez",
+      "sub": "Livraison rapide à domicile ou en point relais, partout dans le monde. Suivez votre colis en temps réel.",
+      "cta": "Voir les produits"
+    },
+    "slide3": {
+      "eyebrow": "Paiement 100% sécurisé",
+      "title": "Achetez en toute",
+      "accent": "sérénité",
+      "sub": "Vos données sont protégées à chaque étape. Paiement sécurisé, retours gratuits sous 30 jours.",
+      "cta": "Créer un compte"
+    }
+  },
+  "trust": {
+    "delivery": "Livraison rapide en France",
+    "payment": "Paiement 100% sécurisé",
+    "returns": "Retours gratuits sous 30 jours"
+  },
+  "home": {
+    "newArrivals": "Arrivages récents",
+    "featuredTitle": "Nouveautés",
+    "seeAll": "Voir tout",
+    "trust": {
+      "paymentTitle": "Paiement 100% sécurisé",
+      "paymentDesc": "Vos données bancaires sont chiffrées et protégées à chaque étape. Nous n'avons jamais accès à vos informations de carte.",
+      "deliveryTitle": "Livraison rapide",
+      "deliveryDesc": "Expédition rapide. Suivez votre commande en temps réel directement depuis votre espace client.",
+      "returnsTitle": "Retours gratuits 30 jours",
+      "returnsDesc": "Pas satisfait ? Retournez votre article sous 30 jours sans frais, sans justification. Remboursement sous 5 jours.",
+      "supportTitle": "Support réactif",
+      "supportDesc": "Notre équipe est disponible 7j/7 pour répondre à toutes vos questions. Réponse garantie sous 24h."
+    }
+  },
+  "product": {
+    "addToCart": "Ajouter au panier",
+    "outOfStock": "Rupture de stock",
+    "inStock": "En stock",
+    "lowStock": "Plus que {{count}} en stock",
+    "quantity": "Quantité",
+    "description": "Description",
+    "shipping": "Livraison & retours",
+    "shippingText": "Livraison en 2-5 jours ouvrés. Retours gratuits sous 30 jours.",
+    "reference": "Référence",
+    "added": "Ajouté au panier !"
+  },
+  "cart": {
+    "title": "Votre panier",
+    "empty": "Votre panier est vide",
+    "emptySubtitle": "Explorez notre catalogue pour trouver vos produits.",
+    "explore": "Explorer le catalogue",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "shippingCalc": "calculée à l'étape suivante",
+    "total": "Total TTC",
+    "checkout": "Passer commande",
+    "remove": "Supprimer",
+    "items": "article(s)"
+  },
+  "checkout": {
+    "steps": ["Livraison", "Paiement"],
+    "address": "Adresse de livraison",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "addressField": "Adresse",
+    "postalCode": "Code postal",
+    "city": "Ville",
+    "country": "Pays",
+    "continue": "Continuer vers le paiement",
+    "shippingMethod": "Mode de livraison",
+    "loadingMethods": "Chargement des modes de livraison…",
+    "noMethods": "Aucun mode de livraison disponible pour cette adresse.",
+    "back": "Retour",
+    "pay": "Payer {{amount}}",
+    "redirecting": "Redirection…",
+    "free": "Gratuit",
+    "freeShippingApplied": "Livraison offerte pour votre commande !",
+    "secureNote": "Paiement sécurisé SSL · Retours gratuits sous 30 jours",
+    "errors": {
+      "firstName": "Prénom requis.",
+      "lastName": "Nom requis.",
+      "email": "Email requis.",
+      "emailInvalid": "Email invalide.",
+      "address": "Adresse requise.",
+      "city": "Ville requise.",
+      "postalCode": "Code postal requis.",
+      "phone": "Téléphone requis.",
+      "noMethod": "Veuillez sélectionner un mode de livraison.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "account": {
+    "dashboard": "Mon compte",
+    "welcome": "Bonjour,",
+    "recentOrders": "Commandes récentes",
+    "noOrders": "Aucune commande pour l'instant.",
+    "viewAll": "Voir toutes mes commandes",
+    "profile": "Mon profil",
+    "security": "Sécurité"
+  },
+  "orders": {
+    "title": "Mes commandes",
+    "empty": "Aucune commande pour l'instant.",
+    "order": "Commande",
+    "date": "Date",
+    "total": "Total",
+    "status": "Statut",
+    "tracking": "Suivi",
+    "trackPackage": "Suivre le colis",
+    "statuses": {
+      "pending": "En attente",
+      "paid": "Payée",
+      "processing": "En préparation",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée",
+      "refunded": "Remboursée"
+    }
+  },
+  "catalog": {
+    "newest": "Nouveautés",
+    "priceAsc": "Prix croissant",
+    "priceDesc": "Prix décroissant",
+    "filters": "Filtres",
+    "clearAll": "Tout effacer",
+    "clearFilters": "Effacer les filtres",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "price": "Prix (€)",
+    "apply": "Appliquer",
+    "availability": "Disponibilité",
+    "inStockOnly": "En stock uniquement",
+    "resultsFor": "Résultats pour",
+    "noProducts": "Aucun produit trouvé",
+    "noProductsHint": "Essayez de modifier vos filtres ou votre recherche.",
+    "page": "Page",
+    "prev": "Précédent",
+    "next": "Suivant"
+  },
+  "notFound": {
+    "subtitle": "La page que vous cherchez n'existe pas ou a été déplacée."
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "loginSubtitle": "Accédez à votre espace personnel",
+    "loginBrandTitle": "Bienvenue\nde retour.",
+    "loginBrandSub": "Connectez-vous pour accéder à votre espace, suivre vos commandes et profiter d'offres personnalisées.",
+    "registerTitle": "Créer un compte",
+    "registerSubtitle": "Gratuit, sans engagement",
+    "registerBrandTitle": "Rejoignez RifLine.",
+    "registerBrandSub": "Créez votre compte en quelques secondes et profitez d'une expérience d'achat simple, rapide et sécurisée.",
+    "passwordHint": "Minimum 8 caractères",
+    "errors": {
+      "email": "Email requis.",
+      "emailInvalid": "Email invalide.",
+      "password": "Mot de passe requis."
+    },
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone (optionnel)",
+    "loginBtn": "Se connecter",
+    "registerBtn": "Créer mon compte",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "signUp": "S'inscrire",
+    "signIn": "Se connecter",
+    "loading": "Connexion…",
+    "registering": "Création du compte…"
+  },
+  "confirmation": {
+    "title": "Commande confirmée !",
+    "subtitle": "Merci pour votre commande. Vous recevrez un email de confirmation.",
+    "orderNumber": "Numéro de commande",
+    "backHome": "Retour à l'accueil",
+    "trackOrder": "Suivre ma commande"
+  },
+  "footer": {
+    "tagline": "Votre boutique en ligne de confiance.",
+    "catalogue": "Catalogue",
+    "allProducts": "Tous les produits",
+    "account": "Compte",
+    "myAccount": "Mon compte",
+    "myOrders": "Mes commandes",
+    "legal": "Légal",
+    "mentions": "Mentions légales",
+    "terms": "CGV",
+    "privacy": "Confidentialité",
+    "rights": "Tous droits réservés."
+  },
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "notFound": "Page introuvable",
+    "backHome": "Retour à l'accueil",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "noResults": "Aucun résultat trouvé."
+  },
+  "currency": {
+    "label": "Devise"
+  },
+  "language": {
+    "label": "Langue"
+  }
+}

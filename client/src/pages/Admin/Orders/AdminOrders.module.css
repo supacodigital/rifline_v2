@@ -1,0 +1,320 @@
+/* ── Filtres ─────────────────────────────────────────────────── */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--spacing-3) 0 calc(var(--spacing-3) + 15px + var(--spacing-2));
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.searchInput:focus { border-color: var(--color-primary); }
+.searchInput::placeholder { color: var(--color-text-muted); }
+
+/* ── Modale détail ───────────────────────────────────────────── */
+.detailModal {
+  max-width: 600px;
+}
+
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.detailBlock {
+  background-color: var(--color-bg-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.detailBlockTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-1);
+}
+
+.detailBlockTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-primary);
+  background: none;
+  border: 1.5px solid var(--color-primary-light);
+  border-radius: var(--radius-md);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.copyBtn:hover {
+  background-color: var(--color-primary-light);
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-size: var(--font-size-sm);
+}
+
+.detailKey {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.detailVal {
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: right;
+  word-break: break-all;
+}
+
+.detailMuted {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Articles ────────────────────────────────────────────────── */
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.itemName { font-weight: 600; color: var(--color-text); }
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.itemSku {
+  font-size: var(--font-size-xs);
+  background-color: var(--color-border);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.itemPrice { font-weight: 700; color: var(--color-text); }
+
+/* ── Totaux ──────────────────────────────────────────────────── */
+.totalsBlock {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.totalRowBold {
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+
+/* ── Adresse ─────────────────────────────────────────────────── */
+.addressBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* ── Expédition ──────────────────────────────────────────────── */
+.parcelCreated {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.parcelForm {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: center;
+}
+
+.methodSelect {
+  flex: 1;
+  min-width: 0;
+}
+
+.trackingHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.trackingForm {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: center;
+}
+
+.trackingInput {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Lien étiquette ──────────────────────────────────────────── */
+.labelLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.labelLink:hover { text-decoration: underline; }
+
+/* ── Bouton bordereau ────────────────────────────────────────── */
+.parcelBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  align-self: flex-start;
+}
+
+.parcelInfo {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-1);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-2);
+  }
+
+  .searchBox { min-width: 0; }
+  .detailModal { max-width: 100%; }
+
+  /* Titre + bouton copier : empilés verticalement */
+  .detailBlockTitleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+
+  .copyBtn {
+    width: 100%;
+    justify-content: center;
+    height: 36px;
+    font-size: var(--font-size-sm);
+  }
+
+  /* Bordereau + tracking : select et bouton empilés */
+  .parcelForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .methodSelect {
+    width: 100%;
+  }
+
+  .trackingForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trackingInput {
+    width: 100%;
+  }
+
+  /* Référence SumUp longue — wrap */
+  .detailVal {
+    word-break: break-word;
+    text-align: right;
+    max-width: 60%;
+  }
+}

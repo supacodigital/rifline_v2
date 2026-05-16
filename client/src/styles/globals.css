@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Couleurs */
+  --color-primary: #7C3AED;
+  --color-primary-hover: #6D28D9;
+  --color-primary-light: #EDE9FE;
+
+  --color-bg: #FFFFFF;
+  --color-bg-subtle: #F7F7FA;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #F4F4F8;
+
+  --color-border: #E8E8EF;
+  --color-border-strong: #D0D0DC;
+
+  --color-text: #0A0A0F;
+  --color-text-secondary: #50505F;
+  --color-text-muted: #8C8CA1;
+
+  --color-accent: #7C3AED;
+  --color-accent-hover: #6D28D9;
+
+  /* Feedback */
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-error: #DC2626;
+  --color-error-bg: #FEF2F2;
+  --color-info: #2563EB;
+
+  /* Typographie — Inter uniquement */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.75rem;
+  --font-size-5xl: 3.5rem;
+
+  /* Espacements — base 4pt */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+
+  /* Alias sémantiques (compatibilité) */
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-2);
+  --spacing-md: var(--spacing-4);
+  --spacing-lg: var(--spacing-6);
+  --spacing-xl: var(--spacing-8);
+  --spacing-2xl: var(--spacing-12);
+
+  /* Bordures */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Ombres légères et précises */
+  --shadow-xs: 0 1px 2px rgba(10, 10, 15, 0.04);
+  --shadow-sm: 0 1px 3px rgba(10, 10, 15, 0.06), 0 1px 2px rgba(10, 10, 15, 0.04);
+  --shadow-md: 0 4px 6px rgba(10, 10, 15, 0.05), 0 2px 4px rgba(10, 10, 15, 0.04);
+  --shadow-lg: 0 10px 15px rgba(10, 10, 15, 0.06), 0 4px 6px rgba(10, 10, 15, 0.04);
+  --shadow-xl: 0 20px 25px rgba(10, 10, 15, 0.08), 0 10px 10px rgba(10, 10, 15, 0.04);
+
+  /* Layout */
+  --container-max: 1200px;
+  --header-height: 98px; /* topBar 56px + navBar 42px */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 88px; /* topBar 52px + navBar 36px */
+  }
+}
+
+main {
+  padding-top: var(--header-height);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+}
+
+ul, ol {
+  list-style: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

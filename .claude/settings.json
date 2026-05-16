@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(echo \"PID serveur: $!\")",
+      "Bash(curl -s http://localhost:3000/api/products?limit=1)",
+      "Bash(curl -s \"http://localhost:3000/api/products?limit=1\")",
+      "Bash(cat /tmp/rifline-server.log)",
+      "Read(//private/tmp/**)",
+      "Bash(node index.js)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_resize"
+    ]
+  }
+}

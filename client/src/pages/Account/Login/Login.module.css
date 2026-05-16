@@ -1,0 +1,321 @@
+.page {
+  min-height: calc(100vh - var(--header-height));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── Panneau gauche : branding ── */
+.brand {
+  background-color: var(--color-text);
+  padding: var(--spacing-12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.brandBg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(124, 58, 237, 0.25) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.brandLogo {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.brandLogo span {
+  color: var(--color-primary);
+}
+
+.brandContent {
+  position: relative;
+  z-index: 1;
+}
+
+.brandTitle {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: var(--spacing-5);
+}
+
+.brandTitle span {
+  color: var(--color-primary);
+}
+
+.brandSub {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  max-width: 360px;
+}
+
+.testimonial {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+}
+
+.testimonialText {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: var(--spacing-4);
+}
+
+.testimonialAuthor {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.testimonialAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.testimonialName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #fff;
+}
+
+.testimonialRole {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Panneau droit : formulaire ── */
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12) var(--spacing-10);
+  background-color: var(--color-bg);
+}
+
+.formInner {
+  width: 100%;
+  max-width: 380px;
+}
+
+.formTitle {
+  font-size: var(--font-size-3xl);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: var(--spacing-2);
+}
+
+.formSub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-8);
+}
+
+/* Champs */
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 var(--spacing-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.inputWithIcon {
+  padding-right: 2.75rem;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.inputError {
+  border-color: var(--color-error);
+}
+
+.inputError:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.inputSuccess {
+  border-color: var(--color-success);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.eyeBtn {
+  position: absolute;
+  right: var(--spacing-3);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-1);
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease;
+  background: none;
+  border: none;
+}
+
+.eyeBtn:hover {
+  color: var(--color-text);
+}
+
+.fieldError {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.fieldHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Barre force mot de passe */
+.strengthBar {
+  display: flex;
+  gap: 3px;
+  margin-top: var(--spacing-2);
+}
+
+.strengthSegment {
+  flex: 1;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-border);
+  transition: background-color 0.25s ease;
+}
+
+.strengthWeak { background-color: var(--color-error); }
+.strengthFair { background-color: var(--color-warning); }
+.strengthGood { background-color: var(--color-info); }
+.strengthStrong { background-color: var(--color-success); }
+
+.strengthLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-top: var(--spacing-1);
+}
+
+/* Erreur globale */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background-color: var(--color-error-bg);
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  font-weight: 500;
+  margin-bottom: var(--spacing-5);
+}
+
+/* Submit */
+.submitBtn {
+  margin-top: var(--spacing-2);
+}
+
+/* Footer */
+.formFooter {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.formFooter a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.formFooter a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .brand {
+    display: none;
+  }
+  .form {
+    padding: var(--spacing-8) var(--spacing-5);
+    align-items: flex-start;
+    padding-top: var(--spacing-10);
+  }
+}

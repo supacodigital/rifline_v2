@@ -1,0 +1,233 @@
+{
+  "nav": {
+    "catalogue": "Catalogue",
+    "search": "Search for a product...",
+    "account": "My account",
+    "orders": "My orders",
+    "admin": "Administration",
+    "logout": "Log out",
+    "login": "Sign in"
+  },
+  "hero": {
+    "slide1": {
+      "eyebrow": "New arrivals",
+      "title": "Shopping,",
+      "accent": "simplified",
+      "sub": "Thousands of carefully selected products. Order in a few clicks, delivered to your door.",
+      "cta": "Browse catalogue"
+    },
+    "slide2": {
+      "eyebrow": "Worldwide delivery",
+      "title": "Delivered",
+      "accent": "anywhere",
+      "sub": "Fast delivery to your home or a pickup point, anywhere in the world. Track your parcel in real time.",
+      "cta": "See products"
+    },
+    "slide3": {
+      "eyebrow": "100% secure payment",
+      "title": "Shop with",
+      "accent": "peace of mind",
+      "sub": "Your data is protected at every step. Secure payment, free returns within 30 days.",
+      "cta": "Create an account"
+    }
+  },
+  "trust": {
+    "delivery": "Fast delivery in France",
+    "payment": "100% secure payment",
+    "returns": "Free returns within 30 days"
+  },
+  "home": {
+    "newArrivals": "Recent arrivals",
+    "featuredTitle": "New arrivals",
+    "seeAll": "See all",
+    "trust": {
+      "paymentTitle": "100% Secure payment",
+      "paymentDesc": "Your banking details are encrypted and protected at every step. We never have access to your card information.",
+      "deliveryTitle": "Fast delivery",
+      "deliveryDesc": "Shipped within 24h on business days. Track your order in real time directly from your account.",
+      "returnsTitle": "Free 30-day returns",
+      "returnsDesc": "Not satisfied? Return your item within 30 days, free of charge, no questions asked. Refund within 5 days.",
+      "supportTitle": "Responsive support",
+      "supportDesc": "Our team is available 7 days a week to answer all your questions. Guaranteed response within 24 hours."
+    }
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "outOfStock": "Out of stock",
+    "inStock": "In stock",
+    "lowStock": "Only {{count}} left in stock",
+    "quantity": "Quantity",
+    "description": "Description",
+    "shipping": "Shipping & returns",
+    "shippingText": "Delivery in 2-5 business days. Free returns within 30 days.",
+    "reference": "Reference",
+    "added": "Added to cart!"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty",
+    "emptySubtitle": "Browse our catalogue to find your products.",
+    "explore": "Browse catalogue",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingCalc": "calculated at next step",
+    "total": "Total",
+    "checkout": "Proceed to checkout",
+    "remove": "Remove",
+    "items": "item(s)"
+  },
+  "checkout": {
+    "steps": ["Shipping", "Payment"],
+    "address": "Shipping address",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "addressField": "Address",
+    "postalCode": "Postal code",
+    "city": "City",
+    "country": "Country",
+    "continue": "Continue to payment",
+    "shippingMethod": "Shipping method",
+    "loadingMethods": "Loading shipping methods…",
+    "noMethods": "No shipping method available for this address.",
+    "back": "Back",
+    "pay": "Pay {{amount}}",
+    "redirecting": "Redirecting…",
+    "free": "Free",
+    "freeShippingApplied": "Free shipping on your order!",
+    "secureNote": "SSL secure payment · Free returns within 30 days",
+    "errors": {
+      "firstName": "First name required.",
+      "lastName": "Last name required.",
+      "email": "Email required.",
+      "emailInvalid": "Invalid email.",
+      "address": "Address required.",
+      "city": "City required.",
+      "postalCode": "Postal code required.",
+      "phone": "Phone required.",
+      "noMethod": "Please select a shipping method.",
+      "generic": "An error occurred. Please try again."
+    }
+  },
+  "account": {
+    "dashboard": "My account",
+    "welcome": "Hello,",
+    "recentOrders": "Recent orders",
+    "noOrders": "No orders yet.",
+    "viewAll": "View all my orders",
+    "profile": "My profile",
+    "security": "Security"
+  },
+  "orders": {
+    "title": "My orders",
+    "empty": "No orders yet.",
+    "order": "Order",
+    "date": "Date",
+    "total": "Total",
+    "status": "Status",
+    "tracking": "Tracking",
+    "trackPackage": "Track package",
+    "statuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    }
+  },
+  "catalog": {
+    "newest": "Newest",
+    "priceAsc": "Price: low to high",
+    "priceDesc": "Price: high to low",
+    "filters": "Filters",
+    "clearAll": "Clear all",
+    "clearFilters": "Clear filters",
+    "category": "Category",
+    "allCategories": "All categories",
+    "price": "Price (€)",
+    "apply": "Apply",
+    "availability": "Availability",
+    "inStockOnly": "In stock only",
+    "resultsFor": "Results for",
+    "noProducts": "No products found",
+    "noProductsHint": "Try adjusting your filters or search.",
+    "page": "Page",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "notFound": {
+    "subtitle": "The page you're looking for doesn't exist or has been moved."
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Access your personal space",
+    "loginBrandTitle": "Welcome\nback.",
+    "loginBrandSub": "Sign in to access your account, track your orders and enjoy personalised offers.",
+    "registerTitle": "Create an account",
+    "registerSubtitle": "Free, no commitment",
+    "registerBrandTitle": "Join RifLine.",
+    "registerBrandSub": "Create your account in seconds and enjoy a simple, fast and secure shopping experience.",
+    "passwordHint": "Minimum 8 characters",
+    "errors": {
+      "email": "Email required.",
+      "emailInvalid": "Invalid email.",
+      "password": "Password required."
+    },
+    "email": "Email address",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone (optional)",
+    "loginBtn": "Sign in",
+    "registerBtn": "Create my account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signUp": "Sign up",
+    "signIn": "Sign in",
+    "loading": "Signing in…",
+    "registering": "Creating account…"
+  },
+  "confirmation": {
+    "title": "Order confirmed!",
+    "subtitle": "Thank you for your order. You will receive a confirmation email.",
+    "orderNumber": "Order number",
+    "backHome": "Back to home",
+    "trackOrder": "Track my order"
+  },
+  "footer": {
+    "tagline": "Your trusted online store.",
+    "catalogue": "Catalogue",
+    "allProducts": "All products",
+    "account": "Account",
+    "myAccount": "My account",
+    "myOrders": "My orders",
+    "legal": "Legal",
+    "mentions": "Legal notice",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "An error occurred.",
+    "notFound": "Page not found",
+    "backHome": "Back to home",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "noResults": "No results found."
+  },
+  "currency": {
+    "label": "Currency"
+  },
+  "language": {
+    "label": "Language"
+  }
+}

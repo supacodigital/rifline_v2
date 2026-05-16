@@ -1,0 +1,857 @@
+/* ── Racine ──────────────────────────────────────────────────── */
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.rootHidden {
+  transform: translateY(-100%);
+}
+
+/* ── Barre principale ────────────────────────────────────────── */
+.topBar {
+  background-color: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-8);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-5);
+}
+
+/* ── Logo ────────────────────────────────────────────────────── */
+.logo {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: -0.05em;
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.logo span {
+  color: var(--color-primary);
+}
+
+/* ── Recherche ───────────────────────────────────────────────── */
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 480px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--spacing-4);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 42px;
+  padding: 0 var(--spacing-5) 0 2.75rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background-color: var(--color-bg-subtle);
+  outline: none;
+  font-family: var(--font-body);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.searchInput:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+/* ── Sélecteurs locale — pills ───────────────────────────────── */
+.localeSelectors {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  margin-left: auto;
+}
+
+.localePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-bg);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.localePill:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+  background-color: var(--color-surface-raised);
+}
+
+.localePillActive {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/* Dropdown locale */
+.localeDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 160px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-2);
+  z-index: 9999;
+  animation: dropIn 0.15s ease;
+}
+
+.localeDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.localeDropdownItem:hover {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.localeDropdownItemActive {
+  color: var(--color-primary);
+  font-weight: 700;
+  background-color: var(--color-primary-light);
+}
+
+.localeDropdownDivider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-1) 0;
+}
+
+.localePillWrapper {
+  position: relative;
+}
+
+/* ── Actions (panier + compte) ───────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* ── Bouton icône (panier) ───────────────────────────────────── */
+.iconBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  background: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.iconBtn:hover {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.cartBadge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: var(--font-body);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* ── Avatar initiales ────────────────────────────────────────── */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  font-family: var(--font-body);
+  flex-shrink: 0;
+}
+
+/* ── Menu compte (wrapper) ───────────────────────────────────── */
+.accountMenu {
+  position: relative;
+}
+
+.accountBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-full);
+  background: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  color: var(--color-text-secondary);
+}
+
+.accountBtn:hover {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border);
+}
+
+.accountBtnOpen {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown ────────────────────────────────────────────────── */
+.dropdown {
+  position: fixed;
+  min-width: 220px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-2);
+  z-index: 9999;
+  animation: dropIn 0.15s ease;
+}
+
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdownHeader {
+  padding: var(--spacing-2) var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+}
+
+.dropdownName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.dropdownEmail {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-1) 0;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+.dropdownItem:hover {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.dropdownItemDanger {
+  color: var(--color-error);
+}
+
+.dropdownItemDanger:hover {
+  background-color: #FEF2F2;
+  color: var(--color-error);
+}
+
+/* Handle de drag — visible uniquement en mobile bottom sheet */
+.dropdownHandle {
+  display: none;
+}
+
+/* Overlay derrière le bottom sheet mobile */
+.mobileSheetOverlay {
+  display: none;
+}
+
+/* ── Rangée locale dans le bottom sheet (compte connecté) ─────── */
+.localeRow {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+}
+
+.localeRowIcon {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.localeSelectSheet {
+  flex: 1;
+  height: 40px;
+  padding: 0 var(--spacing-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg-subtle);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.localeSelectSheet:focus { border-color: var(--color-primary); }
+
+/* ── Bouton globe — caché sur desktop ───────────────────────── */
+.globeBtn {
+  display: none;
+}
+
+/* ── Bottom sheet locale (visiteurs) ────────────────────────── */
+.localeSheet {
+  display: none;
+}
+
+/* ── Chips langue/devise ─────────────────────────────────────── */
+.localeSheetTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-4);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.localeSheetGroup {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+}
+
+.localeSheetLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--spacing-2);
+}
+
+.localeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.localeChip {
+  height: 40px;
+  padding: 0 var(--spacing-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.localeChip:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.localeChipActive {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/* ── Bouton Se connecter ─────────────────────────────────────── */
+.loginBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  height: 36px;
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-full);
+  background: none;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-decoration: none;
+  font-family: var(--font-body);
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.loginBtn:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.loginBtnText {
+  display: inline;
+}
+
+/* ── Barre de navigation — fond sombre ───────────────────────── */
+.navBar {
+  background-color: #0A0A0F;
+}
+
+.navInner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-8);
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-4);
+  height: 40px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.navLink:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navLinkActive {
+  color: #fff;
+  font-weight: 700;
+  position: relative;
+}
+
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+}
+
+/* ── Catégories dans la navBar ───────────────────────────────── */
+.catItem {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.catBtn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font-body);
+  padding: 0 var(--spacing-4);
+  height: 40px;
+}
+
+.catChevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.catChevronOpen {
+  transform: rotate(180deg);
+}
+
+.catDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 210px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-2);
+  z-index: 200;
+  animation: dropIn 0.15s ease;
+}
+
+.catDropdownItem {
+  display: block;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  white-space: nowrap;
+}
+
+.catDropdownItem:hover {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.catDropdownDivider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-1) 0;
+}
+
+/* ── Loupe mobile — cachée sur desktop ───────────────────────── */
+.searchBtn {
+  display: none;
+}
+
+/* ── Barre recherche mobile expansible ───────────────────────── */
+.mobileSearch {
+  display: none;
+}
+
+/* ── Responsive mobile ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .localeSelectors { display: none; }
+
+  .globeBtn {
+    display: flex;
+  }
+
+  .localeRow {
+    display: flex;
+  }
+
+  .localeSheet {
+    display: block;
+    position: fixed;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    border-top: 1px solid var(--color-border);
+    padding-bottom: calc(var(--spacing-4) + env(safe-area-inset-bottom));
+    z-index: 9999;
+    animation: slideUp 0.25s ease;
+  }
+
+  .mobileSheetOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(10, 10, 15, 0.5);
+    z-index: 9998;
+    animation: fadeOverlay 0.2s ease;
+  }
+
+  @keyframes fadeOverlay {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .dropdown {
+    position: fixed;
+    top: auto !important;
+    right: 0 !important;
+    bottom: 0;
+    left: 0;
+    min-width: unset;
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    border: none;
+    border-top: 1px solid var(--color-border);
+    padding: var(--spacing-2) var(--spacing-2) calc(var(--spacing-4) + env(safe-area-inset-bottom));
+    z-index: 9999;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .dropdownHandle {
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-border-strong);
+    margin: var(--spacing-2) auto var(--spacing-3);
+  }
+
+  .dropdownItem {
+    padding: var(--spacing-3) var(--spacing-3);
+    font-size: 1rem;
+  }
+
+  .dropdownHeader {
+    padding: var(--spacing-2) var(--spacing-3) var(--spacing-3);
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  /* Topbar mobile */
+  .inner {
+    height: 56px;
+    padding: 0 var(--spacing-4);
+    gap: var(--spacing-1);
+  }
+
+  .logo {
+    font-size: 1.2rem;
+    margin-right: var(--spacing-1);
+  }
+
+  .searchWrapper {
+    display: none;
+  }
+
+  .actions {
+    gap: 0;
+    margin-left: auto;
+  }
+
+  .iconBtn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .searchBtn {
+    display: flex;
+  }
+
+  .mobileSearch {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #0A0A0F;
+    animation: expandDown 0.18s ease;
+  }
+
+  @keyframes expandDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .mobileSearchIcon {
+    color: rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+  }
+
+  .mobileSearchInput {
+    flex: 1;
+    height: 40px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    color: #fff;
+    background: transparent;
+  }
+
+  .mobileSearchInput::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .mobileSearchClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .loginBtn {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: none;
+    background: none;
+    border-radius: var(--radius-full);
+    justify-content: center;
+    gap: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .loginBtn:hover {
+    background-color: var(--color-surface-raised);
+    border: none;
+    color: var(--color-text);
+  }
+
+  .loginBtnText {
+    display: none;
+  }
+
+  .loginBtn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .navBar {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .navBar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 48px;
+    background: linear-gradient(to right, transparent, #0A0A0F);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .navInner {
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding: 0 var(--spacing-3);
+    gap: 0;
+  }
+
+  .navInner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navLink {
+    font-size: 0.7rem;
+    padding: 0 var(--spacing-3);
+    height: 36px;
+    flex-shrink: 0;
+  }
+}

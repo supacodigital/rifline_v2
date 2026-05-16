@@ -1,0 +1,42 @@
+/* Le formulaire d'inscription partage le layout de connexion */
+.page          { composes: page          from '../Login/Login.module.css'; }
+.brand         { composes: brand         from '../Login/Login.module.css'; }
+.brandBg       { composes: brandBg       from '../Login/Login.module.css'; }
+.brandLogo     { composes: brandLogo     from '../Login/Login.module.css'; }
+.brandContent  { composes: brandContent  from '../Login/Login.module.css'; }
+.brandTitle    { composes: brandTitle    from '../Login/Login.module.css'; }
+.brandSub      { composes: brandSub      from '../Login/Login.module.css'; }
+.testimonial   { composes: testimonial   from '../Login/Login.module.css'; }
+.testimonialText   { composes: testimonialText   from '../Login/Login.module.css'; }
+.testimonialAuthor { composes: testimonialAuthor from '../Login/Login.module.css'; }
+.testimonialAvatar { composes: testimonialAvatar from '../Login/Login.module.css'; }
+.testimonialName   { composes: testimonialName   from '../Login/Login.module.css'; }
+.testimonialRole   { composes: testimonialRole   from '../Login/Login.module.css'; }
+.form          { composes: form          from '../Login/Login.module.css'; }
+.formInner     { composes: formInner     from '../Login/Login.module.css'; }
+.formTitle     { composes: formTitle     from '../Login/Login.module.css'; }
+.formSub       { composes: formSub       from '../Login/Login.module.css'; }
+.fields        { composes: fields        from '../Login/Login.module.css'; }
+.field         { composes: field         from '../Login/Login.module.css'; }
+.fieldRow      { composes: fieldRow      from '../Login/Login.module.css'; }
+.label         { composes: label         from '../Login/Login.module.css'; }
+.inputWrapper  { composes: inputWrapper  from '../Login/Login.module.css'; }
+.input         { composes: input         from '../Login/Login.module.css'; }
+.inputWithIcon { composes: inputWithIcon from '../Login/Login.module.css'; }
+.inputError    { composes: inputError    from '../Login/Login.module.css'; }
+.inputSuccess  { composes: inputSuccess  from '../Login/Login.module.css'; }
+.eyeBtn        { composes: eyeBtn        from '../Login/Login.module.css'; }
+.fieldError    { composes: fieldError    from '../Login/Login.module.css'; }
+.fieldHint     { composes: fieldHint     from '../Login/Login.module.css'; }
+.errorBanner   { composes: errorBanner   from '../Login/Login.module.css'; }
+.submitBtn     { composes: submitBtn     from '../Login/Login.module.css'; }
+.formFooter    { composes: formFooter    from '../Login/Login.module.css'; }
+
+/* Barre de force du mot de passe */
+.strengthBar     { composes: strengthBar     from '../Login/Login.module.css'; }
+.strengthSegment { composes: strengthSegment from '../Login/Login.module.css'; }
+.strengthLabel   { composes: strengthLabel   from '../Login/Login.module.css'; }
+.strengthWeak    { composes: strengthWeak    from '../Login/Login.module.css'; color: var(--color-error); }
+.strengthFair    { composes: strengthFair    from '../Login/Login.module.css'; color: var(--color-warning); }
+.strengthGood    { composes: strengthGood    from '../Login/Login.module.css'; color: var(--color-info); }
+.strengthStrong  { composes: strengthStrong  from '../Login/Login.module.css'; color: var(--color-success); }

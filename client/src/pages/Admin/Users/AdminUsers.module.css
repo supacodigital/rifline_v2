@@ -1,0 +1,63 @@
+/* ── Filtres ─────────────────────────────────────────────────── */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+}
+
+.searchBox {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--spacing-3) 0 calc(var(--spacing-3) + 15px + var(--spacing-2));
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.searchInput:focus { border-color: var(--color-primary); }
+.searchInput::placeholder { color: var(--color-text-muted); }
+
+.roleSelect {
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: var(--spacing-4);
+}
+
+.roleSelect:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .filters { flex-direction: column; align-items: stretch; }
+  .searchBox { max-width: 100%; }
+}
