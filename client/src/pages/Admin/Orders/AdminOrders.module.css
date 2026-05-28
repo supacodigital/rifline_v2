@@ -203,26 +203,6 @@
 }
 
 /* ── Expédition ──────────────────────────────────────────────── */
-.parcelCreated {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-success);
-}
-
-.parcelForm {
-  display: flex;
-  gap: var(--spacing-3);
-  align-items: center;
-}
-
-.methodSelect {
-  flex: 1;
-  min-width: 0;
-}
-
 .trackingHint {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
@@ -238,33 +218,6 @@
 .trackingInput {
   flex: 1;
   min-width: 0;
-}
-
-/* ── Lien étiquette ──────────────────────────────────────────── */
-.labelLink {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.labelLink:hover { text-decoration: underline; }
-
-/* ── Bouton bordereau ────────────────────────────────────────── */
-.parcelBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  align-self: flex-start;
-}
-
-.parcelInfo {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-1);
 }
 
 /* ── Responsive ──────────────────────────────────────────────── */
@@ -292,16 +245,7 @@
     font-size: var(--font-size-sm);
   }
 
-  /* Bordereau + tracking : select et bouton empilés */
-  .parcelForm {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .methodSelect {
-    width: 100%;
-  }
-
+  /* Tracking : champ et bouton empilés */
   .trackingForm {
     flex-direction: column;
     align-items: stretch;

@@ -152,6 +152,7 @@ const Login = () => {
                     <AlertCircle size={11} />{fieldError('password')}
                   </span>
                 )}
+                <Link to="/compte/mot-de-passe-oublie" className={styles.forgotLink}>Mot de passe oublié ?</Link>
               </div>
             </div>
 

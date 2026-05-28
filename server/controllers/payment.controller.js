@@ -1,7 +1,6 @@
 const { validationResult } = require('express-validator');
 const crypto = require('crypto');
 const sumupService = require('../services/sumup.service');
-const sendcloudService = require('../services/sendcloud.service');
 const emailService = require('../services/email.service');
 const orderRepository = require('../repositories/order.repository');
 const productRepository = require('../repositories/product.repository');
@@ -99,7 +98,26 @@ exports.handleWebhook = async (req, res, next) => {
         return res.status(404).json({ error: 'Commande introuvable.' });
       }
 
-      await orderRepository.updateStatus(order.id, 'paid', { transactionId, paidAt: new Date() });
+      // Idempotence : SumUp peut rejouer le webhook. On ne traite que les commandes
+      // encore en 'pending' pour ne pas décrémenter le stock ni renvoyer l'email deux fois.
+      if (order.status !== 'pending') {
+        return res.json({ received: true });
+      }
+
+      // Décrémentation du stock à la confirmation du paiement (pas à la création de la
+      // commande, pour ne pas bloquer le stock sur les paniers abandonnés).
+      const { insufficient } = await orderRepository.decrementStock(order.id);
+      if (insufficient.length && process.env.NODE_ENV !== 'production') {
+        console.error(
+          `[Stock] Commande #${order.id} payée mais stock insuffisant pour : ` +
+          insufficient.map((p) => `${p.productName} (x${p.quantity})`).join(', ')
+        );
+      }
+
+      // Paiement confirmé → commande à préparer.
+      // L'étiquette/bordereau n'est pas générée automatiquement (pas d'abonnement Sendcloud) :
+      // l'expédition et la saisie du numéro de suivi sont gérées manuellement par l'admin.
+      await orderRepository.updateStatus(order.id, 'processing', { transactionId, paidAt: new Date() });
 
       // Email de confirmation en arrière-plan
       const paidOrder = await orderRepository.findById(order.id);
@@ -108,31 +126,6 @@ exports.handleWebhook = async (req, res, next) => {
           console.error(`[Email] Erreur confirmation commande #${order.id}:`, err.message);
         }
       });
-
-      // Création du colis Sendcloud en arrière-plan
-      if (order.shipping_method_id) {
-        sendcloudService.createParcel({ order, shippingMethodId: order.shipping_method_id })
-          .then(async (result) => {
-            const parcel = result.parcel;
-            await orderRepository.updateShipping(order.id, {
-              trackingNumber: parcel.tracking_number || null,
-              labelUrl: parcel.label?.label_printer || parcel.label?.normal_printer?.[0] || null,
-              sendcloudParcelId: parcel.id,
-              status: 'processing',
-            });
-            // Email de notification d'expédition
-            if (parcel.tracking_number) {
-              emailService.sendShippingNotification({ order: paidOrder, trackingNumber: parcel.tracking_number }).catch(() => {});
-            }
-          })
-          .catch((err) => {
-          if (process.env.NODE_ENV !== 'production') {
-            console.error(`[Sendcloud] Erreur création colis commande #${order.id}:`, err.message);
-          }
-        });
-      } else if (process.env.NODE_ENV !== 'production') {
-        console.error(`[Sendcloud] Commande #${order.id} : shipping_method_id manquant, bordereau non créé automatiquement.`);
-      }
     }
 
     res.json({ received: true });

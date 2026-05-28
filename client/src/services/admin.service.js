@@ -45,16 +45,6 @@ export const adminGetOrder = async (id) => {
   return res.json();
 };
 
-export const adminGetOrderShippingMethods = async (id) => {
-  const res = await api.get(`/admin/orders/${id}/shipping-methods`);
-  return res.json();
-};
-
-export const adminCreateParcel = async (id, shippingMethodId) => {
-  const res = await api.post(`/admin/orders/${id}/parcel`, { shippingMethodId });
-  return res.json();
-};
-
 export const adminUpdateOrderStatus = async (id, status) => {
   const res = await api.put(`/admin/orders/${id}/status`, { status });
   return res.json();

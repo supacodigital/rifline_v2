@@ -52,8 +52,6 @@ router.patch('/products/:id/featured', adminProductsController.toggleFeatured);
 // Commandes
 router.get('/orders', adminOrdersController.getAll);
 router.get('/orders/:id', adminOrdersController.getOne);
-router.get('/orders/:id/shipping-methods', adminOrdersController.getShippingMethods);
-router.post('/orders/:id/parcel', adminOrdersController.createParcel);
 router.put('/orders/:id/status', orderStatusRules, adminOrdersController.updateStatus);
 router.put('/orders/:id/tracking', [
   body('trackingNumber').trim().notEmpty().withMessage('Numéro de suivi requis.'),

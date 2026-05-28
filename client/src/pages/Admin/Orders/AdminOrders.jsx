@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { CheckCircle, AlertCircle, Search, X, Package, MapPin, CreditCard, Truck, FileText, Copy, ClipboardCheck } from 'lucide-react';
-import { adminGetOrders, adminUpdateOrderStatus, adminGetOrder, adminUpdateOrderTracking, adminGetOrderShippingMethods, adminCreateParcel } from '../../../services/admin.service';
+import { CheckCircle, AlertCircle, Search, X, Package, MapPin, CreditCard, Truck, Copy, ClipboardCheck } from 'lucide-react';
+import { adminGetOrders, adminUpdateOrderStatus, adminGetOrder, adminUpdateOrderTracking } from '../../../services/admin.service';
 import { formatPrice } from '../../../utils/formatPrice';
 import shared from '../admin.shared.module.css';
 import styles from './AdminOrders.module.css';
@@ -28,13 +28,6 @@ const OrderDetail = ({ orderId, onClose }) => {
   const [trackingSuccess, setTrackingSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const [shippingMethods, setShippingMethods] = useState([]);
-  const [shippingLoading, setShippingLoading] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const [creatingParcel, setCreatingParcel] = useState(false);
-  const [parcelError, setParcelError] = useState(null);
-  const [parcelSuccess, setParcelSuccess] = useState(null);
-
   const fetchOrder = () => {
     setLoading(true);
     adminGetOrder(orderId)
@@ -44,43 +37,6 @@ const OrderDetail = ({ orderId, onClose }) => {
   };
 
   useEffect(() => { fetchOrder(); }, [orderId]);
-
-  useEffect(() => {
-    if (!order || order.sendcloud_parcel_id) return;
-    setShippingLoading(true);
-    adminGetOrderShippingMethods(orderId)
-      .then((data) => {
-        const methods = data.methods || [];
-        setShippingMethods(methods);
-        if (methods.length > 0) setSelectedMethod(methods[0].id);
-      })
-      .catch(() => {})
-      .finally(() => setShippingLoading(false));
-  }, [order?.id, order?.sendcloud_parcel_id]);
-
-  const handleCreateParcel = async () => {
-    if (!selectedMethod) return;
-    setCreatingParcel(true);
-    setParcelError(null);
-    setParcelSuccess(null);
-    try {
-      const data = await adminCreateParcel(orderId, selectedMethod);
-      if (data.error) { setParcelError(data.error); return; }
-      setParcelSuccess(data);
-      setOrder((prev) => ({
-        ...prev,
-        tracking_number: data.trackingNumber || prev.tracking_number,
-        label_url: data.labelUrl || prev.label_url,
-        sendcloud_parcel_id: data.parcelId || prev.sendcloud_parcel_id,
-        status: 'processing',
-      }));
-      if (data.trackingNumber) setTrackingInput(data.trackingNumber);
-    } catch {
-      setParcelError('Une erreur est survenue lors de la création du bordereau.');
-    } finally {
-      setCreatingParcel(false);
-    }
-  };
 
   const handleCopyShippingInfo = () => {
     const totalWeight = (order.items || []).reduce(
@@ -219,52 +175,15 @@ const OrderDetail = ({ orderId, onClose }) => {
                 </div>
               </div>
 
-              {/* Expédition */}
+              {/* Expédition — bordereau généré manuellement (pas d'abonnement Sendcloud). */}
               <div className={styles.detailBlock}>
                 <div className={styles.detailBlockTitle}><Truck size={14} />Expédition</div>
 
-                {/* Bordereau déjà créé */}
-                {order.sendcloud_parcel_id ? (
-                  <div className={styles.parcelCreated}>
-                    <CheckCircle size={14} />
-                    Bordereau créé (#{order.sendcloud_parcel_id})
-                  </div>
-                ) : (
-                  <>
-                    {parcelError && (
-                      <div className={shared.errorBanner}><AlertCircle size={14} />{parcelError}</div>
-                    )}
-                    {parcelSuccess && (
-                      <div className={shared.successBanner}>
-                        <CheckCircle size={14} />Bordereau créé. Numéro de suivi : {parcelSuccess.trackingNumber || '—'}
-                      </div>
-                    )}
-                    {shippingLoading ? (
-                      <div className={styles.trackingHint}>Chargement des méthodes de livraison…</div>
-                    ) : shippingMethods.length === 0 ? (
-                      <div className={styles.trackingHint}>Aucune méthode de livraison disponible.</div>
-                    ) : (
-                      <div className={styles.parcelForm}>
-                        <select
-                          className={`${shared.input} ${styles.methodSelect}`}
-                          value={selectedMethod || ''}
-                          onChange={(e) => setSelectedMethod(Number(e.target.value))}
-                        >
-                          {shippingMethods.map((m) => (
-                            <option key={m.id} value={m.id}>{m.name}{m.price > 0 ? ` — ${formatPrice(m.price)}` : ''}</option>
-                          ))}
-                        </select>
-                        <button
-                          className={shared.btnPrimary}
-                          onClick={handleCreateParcel}
-                          disabled={creatingParcel || !selectedMethod}
-                        >
-                          {creatingParcel ? 'Création…' : 'Créer le bordereau'}
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
+                <div className={styles.trackingHint}>
+                  Générez l'étiquette manuellement (panel Sendcloud, La Poste…), puis saisissez le
+                  numéro de suivi ci-dessous. La commande passera automatiquement en « Expédiée »
+                  et le client recevra une notification.
+                </div>
 
                 {/* Numéro de suivi manuel */}
                 {trackingError && (
@@ -289,12 +208,6 @@ const OrderDetail = ({ orderId, onClose }) => {
                     {savingTracking ? 'Enregistrement…' : order.tracking_number ? 'Mettre à jour' : 'Enregistrer'}
                   </button>
                 </div>
-
-                {order.label_url && (
-                  <a href={order.label_url} target="_blank" rel="noopener noreferrer" className={styles.labelLink}>
-                    <FileText size={14} />Télécharger l'étiquette PDF
-                  </a>
-                )}
               </div>
 
             </div>

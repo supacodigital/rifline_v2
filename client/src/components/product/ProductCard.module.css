@@ -56,22 +56,22 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background-color: var(--color-primary);
-  color: #fff;
+  background-color: var(--color-yellow);
+  color: var(--color-text);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 12px rgba(250, 204, 21, 0.45);
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   z-index: 1;
 }
 
 .cartBtn:hover {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-yellow-hover);
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 6px 16px rgba(250, 204, 21, 0.55);
 }
 
 .cartBtnDisabled {
@@ -247,8 +247,8 @@
   height: 40px;
   padding: 0 var(--spacing-4);
   border-radius: var(--radius-lg);
-  background-color: var(--color-primary);
-  color: #fff;
+  background-color: var(--color-yellow);
+  color: var(--color-text);
   font-size: var(--font-size-sm);
   font-weight: 600;
   font-family: var(--font-body);
@@ -256,6 +256,10 @@
   cursor: pointer;
   white-space: nowrap;
   transition: background-color 0.25s ease;
+}
+
+.cartBtnList:hover {
+  background-color: var(--color-yellow-hover);
 }
 
 @media (max-width: 500px) {

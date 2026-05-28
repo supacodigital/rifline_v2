@@ -1,8 +1,10 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const userRepository = require('../repositories/user.repository');
 const refreshTokenRepository = require('../repositories/refreshToken.repository');
+const emailService = require('../services/email.service');
 
 const SALT_ROUNDS = 12;
 const ACCESS_TOKEN_EXPIRY = '15m';
@@ -12,7 +14,14 @@ const REFRESH_TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 const generateTokens = (user) => {
   const payload = { id: user.id, email: user.email, role: user.role };
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
-  const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY });
+  // jti aléatoire : garantit l'unicité du refresh token même si deux sont générés
+  // dans la même seconde (sinon iat/exp identiques → collision sur l'index UNIQUE
+  // refresh_tokens.token, ex. login suivi d'un refresh immédiat).
+  const refreshToken = jwt.sign(
+    { ...payload, jti: crypto.randomBytes(16).toString('hex') },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: REFRESH_TOKEN_EXPIRY }
+  );
   return { accessToken, refreshToken };
 };
 
@@ -175,6 +184,61 @@ exports.updateProfile = async (req, res, next) => {
 
     await userRepository.updateProfile(req.user.id, { firstName, lastName, email, phone });
     res.json({ message: 'Profil mis à jour.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const { email } = req.body;
+    const user = await userRepository.findByEmail(email);
+
+    // Réponse identique même si l'email n'existe pas (anti-enumération)
+    if (!user) {
+      return res.json({ message: 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 heure
+
+    await userRepository.setResetToken(user.id, token, expiresAt);
+
+    const resetUrl = `${process.env.APP_URL}/compte/reinitialiser-mot-de-passe?token=${token}`;
+    await emailService.sendPasswordReset({ email: user.email, resetUrl });
+
+    res.json({ message: 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const { token, password } = req.body;
+
+    const user = await userRepository.findByResetToken(token);
+    if (!user || new Date(user.reset_token_expires) < new Date()) {
+      return res.status(400).json({ error: 'Ce lien est invalide ou a expiré.' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    await userRepository.clearResetToken(user.id, passwordHash);
+
+    // Invalide toutes les sessions actives
+    await refreshTokenRepository.deleteByUserId(user.id);
+
+    res.json({ message: 'Mot de passe réinitialisé avec succès.' });
   } catch (err) {
     next(err);
   }

@@ -1,6 +1,5 @@
 const { validationResult } = require('express-validator');
 const orderRepository = require('../../repositories/order.repository');
-const sendcloudService = require('../../services/sendcloud.service');
 const emailService = require('../../services/email.service');
 
 const VALID_STATUSES = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
@@ -23,77 +22,6 @@ exports.getOne = async (req, res, next) => {
     const order = await orderRepository.findById(req.params.id);
     if (!order) return res.status(404).json({ error: 'Commande introuvable.' });
     res.json(order);
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.createParcel = async (req, res, next) => {
-  try {
-    const order = await orderRepository.findById(req.params.id);
-    if (!order) return res.status(404).json({ error: 'Commande introuvable.' });
-
-    if (order.sendcloud_parcel_id) {
-      return res.status(409).json({ error: 'Un bordereau existe déjà pour cette commande.' });
-    }
-
-    // Utiliser la méthode choisie par le client, ou celle passée manuellement par l'admin
-    const shippingMethodId = req.body.shippingMethodId || order.shipping_method_id;
-    if (!shippingMethodId) {
-      return res.status(422).json({ error: 'Méthode de livraison requise.' });
-    }
-
-    // Calcul du poids total depuis les articles
-    const totalWeight = (order.items || []).reduce(
-      (acc, item) => acc + (parseFloat(item.weight) || 0) * item.quantity,
-      0
-    ) || 0.5; // minimum 500g si non renseigné
-
-    const result = await sendcloudService.createParcel({
-      order: { ...order, total_weight: totalWeight },
-      shippingMethodId,
-    });
-
-    const parcel = result.parcel;
-    await orderRepository.updateShipping(order.id, {
-      trackingNumber: parcel.tracking_number || null,
-      labelUrl: parcel.label?.label_printer || parcel.label?.normal_printer?.[0] || null,
-      sendcloudParcelId: parcel.id,
-      status: 'processing',
-    });
-
-    // Notification d'expédition par email
-    if (parcel.tracking_number) {
-      emailService.sendShippingNotification({ order, trackingNumber: parcel.tracking_number }).catch(() => {});
-    }
-
-    res.json({
-      message: 'Bordereau créé avec succès.',
-      trackingNumber: parcel.tracking_number,
-      labelUrl: parcel.label?.label_printer || parcel.label?.normal_printer?.[0] || null,
-      parcelId: parcel.id,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getShippingMethods = async (req, res, next) => {
-  try {
-    const order = await orderRepository.findById(req.params.id);
-    if (!order) return res.status(404).json({ error: 'Commande introuvable.' });
-
-    const totalWeight = (order.items || []).reduce(
-      (acc, item) => acc + (parseFloat(item.weight) || 0) * item.quantity,
-      0
-    ) || 0.5;
-
-    const result = await sendcloudService.getShippingMethods({
-      weight: totalWeight,
-      toCountry: order.shipping_country || 'FR',
-    });
-
-    res.json({ methods: result.shipping_methods || [], weight: totalWeight });
   } catch (err) {
     next(err);
   }

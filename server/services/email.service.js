@@ -31,6 +31,41 @@ const send = async (options) => {
   });
 };
 
+exports.sendPasswordReset = async ({ email, resetUrl }) => {
+  await send({
+    to: email,
+    subject: 'Réinitialisation de votre mot de passe — RifLine',
+    html: `
+      <div style="font-family:Inter,system-ui,sans-serif;max-width:600px;margin:0 auto;color:#0A0A0F;">
+        <div style="background:#7C3AED;padding:32px 40px;">
+          <h1 style="color:#fff;font-size:24px;font-weight:900;letter-spacing:-0.04em;margin:0;">RifLine</h1>
+        </div>
+        <div style="padding:40px;">
+          <h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">Réinitialisez votre mot de passe</h2>
+          <p style="color:#50505F;margin:0 0 24px;line-height:1.6;">
+            Vous avez demandé la réinitialisation de votre mot de passe.<br>
+            Cliquez sur le bouton ci-dessous. Ce lien est valable <strong>1 heure</strong>.
+          </p>
+          <div style="text-align:center;margin-bottom:32px;">
+            <a href="${resetUrl}" style="display:inline-block;background:#7C3AED;color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:-0.01em;">
+              Réinitialiser le mot de passe
+            </a>
+          </div>
+          <p style="font-size:12px;color:#8C8CA1;text-align:center;margin:0;">
+            Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.<br>
+            Votre mot de passe ne sera pas modifié.
+          </p>
+        </div>
+        <div style="background:#F7F7FA;padding:20px 40px;text-align:center;">
+          <p style="font-size:12px;color:#8C8CA1;margin:0;">
+            © RifLine — <a href="${process.env.APP_URL}" style="color:#7C3AED;">rif-line.com</a>
+          </p>
+        </div>
+      </div>
+    `,
+  });
+};
+
 exports.sendOrderConfirmation = async ({ order }) => {
   if (!isConfigured()) return;
 

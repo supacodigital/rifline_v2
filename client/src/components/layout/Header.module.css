@@ -209,6 +209,19 @@
   color: var(--color-text);
 }
 
+/* ── Bouton panier — touche de jaune ─────────────────────────── */
+.cartBtn {
+  background-color: var(--color-yellow);
+  border-color: var(--color-yellow);
+  color: var(--color-text);
+}
+
+.cartBtn:hover {
+  background-color: var(--color-yellow-hover);
+  border-color: var(--color-yellow-hover);
+  color: var(--color-text);
+}
+
 .cartBadge {
   position: absolute;
   top: 2px;
@@ -217,8 +230,8 @@
   height: 18px;
   padding: 0 4px;
   border-radius: var(--radius-full);
-  background-color: var(--color-primary);
-  color: #fff;
+  background-color: var(--color-text);
+  color: var(--color-yellow);
   font-size: 10px;
   font-weight: 800;
   display: flex;

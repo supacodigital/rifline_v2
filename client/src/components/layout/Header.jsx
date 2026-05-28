@@ -181,7 +181,7 @@ const Header = ({ onCartOpen }) => {
             )}
 
             {/* Panier */}
-            <button className={styles.iconBtn} onClick={onCartOpen} aria-label="Panier">
+            <button className={`${styles.iconBtn} ${styles.cartBtn}`} onClick={onCartOpen} aria-label="Panier">
               <ShoppingCart size={20} />
               {totalItems > 0 && <span className={styles.cartBadge}>{totalItems}</span>}
             </button>

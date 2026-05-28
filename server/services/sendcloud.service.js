@@ -19,36 +19,10 @@ const getShippingMethods = async ({ weight, toCountry }) => {
   return response.json();
 };
 
-const createParcel = async ({ order, shippingMethodId }) => {
-  const response = await fetch('https://panel.sendcloud.sc/api/v2/parcels', {
-    method: 'POST',
-    headers: {
-      Authorization: getAuthHeader(),
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      parcel: {
-        name: `${order.shipping_first_name} ${order.shipping_last_name}`,
-        address: order.shipping_address,
-        city: order.shipping_city,
-        postal_code: order.shipping_postal_code,
-        country: order.shipping_country,
-        email: order.shipping_email,
-        telephone: order.shipping_phone,
-        order_number: `ORDER-${order.id}`,
-        weight: order.total_weight,
-        shipment: { id: shippingMethodId },
-        request_label: true,
-      },
-    }),
-  });
+// Note : la création de colis / génération d'étiquette via l'API Sendcloud
+// (POST /parcels) n'est pas utilisée — le client ne souscrit pas à l'abonnement
+// permettant la génération automatique des bordereaux. Sendcloud sert uniquement
+// à afficher les transporteurs et tarifs disponibles (getShippingMethods).
+// L'expédition et la saisie du numéro de suivi sont gérées manuellement par l'admin.
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(`Sendcloud parcel échoué (${response.status}): ${JSON.stringify(error)}`);
-  }
-
-  return response.json();
-};
-
-module.exports = { getShippingMethods, createParcel };
+module.exports = { getShippingMethods };
