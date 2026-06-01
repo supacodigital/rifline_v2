@@ -23,7 +23,12 @@ const app = express();
 app.set('trust proxy', 1);
 
 // En-têtes de sécurité HTTP (XSS, clickjacking, sniffing…).
-app.use(helmet());
+// CORP en 'cross-origin' : le front (rif-line.com) et l'API (api.rif-line.com)
+// sont sur des origines différentes ; sans ça, helmet pose 'same-origin' et le
+// navigateur bloque le chargement des images servies depuis /uploads.
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 
 const allowedOrigins = [process.env.APP_URL, 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'].filter(Boolean);
 app.use(cors({
