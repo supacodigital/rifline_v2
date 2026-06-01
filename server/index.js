@@ -62,16 +62,6 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/shipping', shippingRoutes);
 app.use('/api/admin', adminRoutes);
 
-// ── Frontend React (production) ──────────────────────────────
-// Sert le build Vite (client/dist) sur le même domaine que l'API.
-// Toute route non-API renvoie index.html pour laisser React Router gérer (SPA).
-// Placé APRÈS les routes /api pour que l'API garde la priorité.
-const clientDist = path.join(__dirname, '..', 'client', 'dist');
-app.use(express.static(clientDist));
-app.get(/^\/(?!api\/).*/, (req, res, next) => {
-  res.sendFile(path.join(clientDist, 'index.html'), (err) => err && next());
-});
-
 app.use(errorHandler);
 
 module.exports = app;
