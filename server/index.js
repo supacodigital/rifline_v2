@@ -66,7 +66,11 @@ app.use(errorHandler);
 
 module.exports = app;
 
-if (require.main === module) {
+// On démarre le serveur sauf en environnement de test (Supertest importe l'app
+// sans la faire écouter). Sous Phusion Passenger (O2switch), le fichier est chargé
+// via require() et non exécuté directement, donc `require.main === module` serait
+// faux : il faut quand même appeler app.listen() pour que Passenger récupère l'app.
+if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 3000;
   const ENV = process.env.NODE_ENV || 'development';
 
