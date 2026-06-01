@@ -105,8 +105,10 @@ exports.create = async ({ userId, items, shippingAddress, totalAmount, shippingA
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [orderId, item.productId, item.productName, item.productSku || null, item.unitPrice, item.quantity, item.weight || 0]
       );
-      // Décrémenter le stock
-      await conn.query('UPDATE products SET stock = stock - ? WHERE id = ?', [item.quantity, item.productId]);
+      // Le stock n'est PAS décrémenté ici : la commande est créée en 'pending'
+      // (paiement non encore confirmé). La décrémentation a lieu à la confirmation
+      // du paiement via decrementStock(), pour ne pas bloquer le stock sur des
+      // paniers abandonnés.
     }
 
     await conn.commit();
@@ -121,6 +123,42 @@ exports.create = async ({ userId, items, shippingAddress, totalAmount, shippingA
 
 exports.updateCheckoutId = async (orderId, checkoutId) => {
   await pool.query('UPDATE orders SET sumup_checkout_id = ? WHERE id = ?', [checkoutId, orderId]);
+};
+
+// Décrémente le stock des produits d'une commande, à appeler une fois le paiement confirmé.
+// Décrémentation atomique (WHERE stock >= quantity) pour éviter les surventes en cas de
+// paiements concurrents. Retourne la liste des produits dont le stock était insuffisant.
+exports.decrementStock = async (orderId) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [items] = await conn.query(
+      'SELECT product_id, product_name, quantity FROM order_items WHERE order_id = ?',
+      [orderId]
+    );
+
+    const insufficient = [];
+    for (const item of items) {
+      // product_id peut être NULL si le produit a été supprimé entre-temps
+      if (!item.product_id) continue;
+      const [result] = await conn.query(
+        'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?',
+        [item.quantity, item.product_id, item.quantity]
+      );
+      if (result.affectedRows === 0) {
+        insufficient.push({ productId: item.product_id, productName: item.product_name, quantity: item.quantity });
+      }
+    }
+
+    await conn.commit();
+    return { insufficient };
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
 };
 
 exports.updateStatus = async (orderId, status, extra = {}) => {
@@ -151,10 +189,3 @@ exports.updateTracking = async (orderId, trackingNumber) => {
   );
 };
 
-exports.updateShipping = async (orderId, { trackingNumber, labelUrl, sendcloudParcelId, status }) => {
-  await pool.query(
-    `UPDATE orders SET tracking_number = ?, label_url = ?, sendcloud_parcel_id = ?, status = ?, shipped_at = NOW()
-     WHERE id = ?`,
-    [trackingNumber, labelUrl, sendcloudParcelId, status, orderId]
-  );
-};

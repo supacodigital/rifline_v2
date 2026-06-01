@@ -6,15 +6,30 @@
 
 ### 🔴 Bloquant — à faire absolument
 
-- [ ] **Tester le paiement SumUp dans le navigateur** — vérifier le flux complet (frontend → backend → redirection SumUp)
-- [ ] **Tester le webhook SumUp** — utiliser ngrok pour exposer localhost, configurer l'URL dans le dashboard SumUp
-- [ ] **Décider pour Sendcloud** — abonnement payant ou gestion manuelle des étiquettes par le marchand
-- [ ] **Changer les secrets JWT** — remplacer `change_me_jwt_secret` et `change_me_refresh_secret` par des chaînes aléatoires de 64+ caractères
+- [x] **Tester le paiement SumUp dans le navigateur** — ✅ flux validé en E2E (accueil → panier → checkout → redirection SumUp réelle)
+- [x] **Tester le webhook SumUp** — ✅ validé via webhook signé simulé (signature HMAC, passage `processing`, décrément stock, idempotence)
+- [x] **Décider pour Sendcloud** — ✅ pas d'abonnement : Sendcloud sert uniquement à afficher les transporteurs, génération d'étiquette retirée, suivi saisi manuellement par l'admin
+- [ ] **Renseigner les secrets JWT dans cPanel** — utiliser les valeurs générées ci-dessous (NE PAS committer). Le `.env` local garde encore les valeurs `change_me_…`, ce qui est sans risque en local, mais en prod il FAUT ces secrets forts :
+  ```
+  JWT_SECRET=EKJhKpWGYbFOawNbX7vyClyiN9gArlD1qLNYmaGErIUd27YF7CL9OX9yhZRnzbXc
+  JWT_REFRESH_SECRET=ow2YHKWZJ9e_VLuXw2Gvfr_yLGKo9dq3tLNIBMU0ozgFkyxJSpCwJsTW551a_2Nz
+  ```
+  (ou en régénérer : `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`)
+- [ ] **Mettre `NODE_ENV=production`** dans cPanel (active les cookies `secure` + masque les messages d'erreur internes)
+
+### ✅ Sécurité serveur — déjà en place dans le code (session de durcissement)
+
+- [x] `helmet` — en-têtes de sécurité HTTP (CSP, HSTS, X-Frame-Options…)
+- [x] `express-rate-limit` — 10 req/15min sur les routes auth (anti brute-force, testé → 429), 300 req/15min sur le reste de l'API
+- [x] `trust proxy` activé — vraie IP client derrière le proxy O2switch
+- [x] Webhook SumUp exclu du rate-limit et du parser JSON (corps brut pour la signature)
+- [x] Refresh token avec `jti` unique (corrige une collision 500 sur l'index UNIQUE)
+- [x] Banner de démarrage silencieux en production (pas de logs verbeux)
 
 ### 🟡 À compléter dès que possible
 
 - [ ] **Pages légales** — remplir les champs `À COMPLÉTER` dans `/mentions-legales`, `/cgv`, `/confidentialite` (SIRET, adresse, raison sociale, dates)
-- [ ] **Photos produits** — uploader les images depuis l'admin pour les 27 produits en base
+- [ ] **Catalogue produits** — créer les vrais produits + uploader leurs images depuis le back-office admin (la base ne contient que des produits de démo)
 - [ ] **Images hero slider** — remplacer `hero1.webp`, `hero2.png`, `hero3.png` par les vraies photos
 - [ ] **Liens réseaux sociaux** — remplacer les `href="#"` Instagram et TikTok dans le footer par les vraies URLs
 
@@ -187,6 +202,19 @@ CREATE INDEX idx_orders_user ON orders(user_id);
 CREATE INDEX idx_orders_status ON orders(status);
 ```
 
+### 2.2 bis — ⚠️ Appliquer la migration des colonnes manquantes
+
+Le schéma ci-dessus ne contient pas certaines colonnes ajoutées ensuite
+(`products.is_featured`, `orders.shipping_method_id`, `orders.guest_token`…).
+**Après** avoir importé le schéma, exécuter dans phpMyAdmin le contenu de :
+
+```
+server/migrations/001_add_missing_columns.sql
+```
+
+Sans cette migration, l'admin (produits mis en avant) et le checkout (méthode de
+livraison, commandes invité) échoueront. La migration est idempotente (`IF NOT EXISTS`).
+
 ### 2.3 Créer le compte admin
 
 Remplacer le hash ci-dessous par celui généré pour votre mot de passe (voir section Outils) :
@@ -244,10 +272,11 @@ DB_USER=VOTRE_USER_MYSQL
 DB_PASSWORD=VOTRE_MOT_DE_PASSE_MYSQL
 DB_NAME=rifline_db
 
-JWT_SECRET=CHAINE_ALEATOIRE_64_CHARS_MIN
-JWT_REFRESH_SECRET=AUTRE_CHAINE_ALEATOIRE_64_CHARS_MIN
+# Secrets JWT générés (à utiliser tels quels ou à régénérer) :
+JWT_SECRET=EKJhKpWGYbFOawNbX7vyClyiN9gArlD1qLNYmaGErIUd27YF7CL9OX9yhZRnzbXc
+JWT_REFRESH_SECRET=ow2YHKWZJ9e_VLuXw2Gvfr_yLGKo9dq3tLNIBMU0ozgFkyxJSpCwJsTW551a_2Nz
 
-SUMUP_API_KEY=sk_live_XXXX
+SUMUP_API_KEY=sk_live_XXXX            # sk_live pour encaisser réellement, sk_test pour valider
 SUMUP_MERCHANT_CODE=VOTRE_CODE_MARCHAND
 SUMUP_WEBHOOK_SECRET=VOTRE_SECRET_WEBHOOK
 
@@ -256,12 +285,17 @@ SENDCLOUD_SECRET_KEY=VOTRE_CLE_SECRETE
 
 APP_URL=https://rif-line.com
 SERVER_URL=https://api.rif-line.com
+
+# Email (optionnel — laisser SMTP_HOST vide désactive les notifications de commande)
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=RifLine <contact@rif-line.com>
 ```
 
-> Pour générer des secrets JWT sécurisés :
-> ```bash
-> node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-> ```
+> Pour régénérer des secrets JWT : `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`
 
 ### 3.4 Installer les dépendances
 
@@ -292,7 +326,11 @@ Phusion Passenger gère le process — pas besoin de PM2 en production.
 Créer/modifier `client/.env.production` :
 ```env
 VITE_API_URL=https://api.rif-line.com/api
+VITE_MONDIAL_RELAY_KEY=     # clé Mondial Relay (vide = clé de démo BDTEST13)
 ```
+
+> ⚠️ Ces variables `VITE_*` sont **figées au moment du `npm run build`** : elles
+> sont compilées dans le bundle. Toute modification nécessite un nouveau build.
 
 ### 4.2 Builder le frontend
 
@@ -471,3 +509,16 @@ Il n'y a pas de système de migration automatique. Pour chaque modification de s
 | `SENDCLOUD_SECRET_KEY` | clé test | clé prod | Clé secrète Sendcloud |
 | `APP_URL` | `http://localhost:5173` | `https://rif-line.com` | URL frontend (CORS + redirects SumUp) |
 | `SERVER_URL` | `http://localhost:3000` | `https://api.rif-line.com` | URL API (URLs absolues des images) |
+| `SMTP_HOST` | vide | hôte SMTP | Email (vide = notifications désactivées) |
+| `SMTP_PORT` | `587` | `587` | Port SMTP |
+| `SMTP_SECURE` | `false` | `true`/`false` | TLS SMTP |
+| `SMTP_USER` | — | identifiant SMTP | Compte d'envoi |
+| `SMTP_PASS` | — | mot de passe SMTP | Mot de passe d'envoi |
+| `SMTP_FROM` | — | `RifLine <…>` | Expéditeur des emails |
+
+### Variables frontend (Vite — dans `client/.env.production`, figées au build)
+
+| Variable | Dev | Prod | Description |
+|----------|-----|------|-------------|
+| `VITE_API_URL` | `http://localhost:3000/api` | `https://api.rif-line.com/api` | URL de l'API consommée par le front |
+| `VITE_MONDIAL_RELAY_KEY` | vide (démo `BDTEST13`) | clé Mondial Relay | Widget point relais au checkout |

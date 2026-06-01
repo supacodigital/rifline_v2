@@ -162,6 +162,20 @@
   letter-spacing: -0.01em;
 }
 
+.forgotLink {
+  display: block;
+  text-align: right;
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.forgotLink:hover {
+  opacity: 0.75;
+}
+
 .inputWrapper {
   position: relative;
   display: flex;

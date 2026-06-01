@@ -14,6 +14,8 @@ import Catalog from './pages/Catalog/Catalog';
 import ProductDetail from './pages/ProductDetail/ProductDetail';
 import Login from './pages/Account/Login/Login';
 import Register from './pages/Account/Register/Register';
+import ForgotPassword from './pages/Account/ForgotPassword/ForgotPassword';
+import ResetPassword from './pages/Account/ResetPassword/ResetPassword';
 import Dashboard from './pages/Account/Dashboard/Dashboard';
 import Profile from './pages/Account/Profile/Profile';
 import Orders from './pages/Account/Orders/Orders';
@@ -54,6 +56,8 @@ const AppLayout = () => {
           <Route path="/produit/:slug" element={<ProductDetail />} />
           <Route path="/compte/connexion" element={<Login />} />
           <Route path="/compte/inscription" element={<Register />} />
+          <Route path="/compte/mot-de-passe-oublie" element={<ForgotPassword />} />
+          <Route path="/compte/reinitialiser-mot-de-passe" element={<ResetPassword />} />
 
           {/* Espace client */}
           <Route path="/compte" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

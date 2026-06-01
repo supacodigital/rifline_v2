@@ -39,6 +39,28 @@ exports.updateRole = async (id, role) => {
   await pool.query('UPDATE users SET role = ? WHERE id = ?', [role, id]);
 };
 
+exports.setResetToken = async (id, token, expiresAt) => {
+  await pool.query(
+    'UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?',
+    [token, expiresAt, id]
+  );
+};
+
+exports.findByResetToken = async (token) => {
+  const [rows] = await pool.query(
+    'SELECT id, email, reset_token_expires FROM users WHERE reset_token = ?',
+    [token]
+  );
+  return rows[0] || null;
+};
+
+exports.clearResetToken = async (id, passwordHash) => {
+  await pool.query(
+    'UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?',
+    [passwordHash, id]
+  );
+};
+
 exports.findAll = async ({ page, limit, search }) => {
   const offset = (page - 1) * limit;
   const conditions = [];

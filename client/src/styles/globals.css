@@ -21,6 +21,10 @@
   --color-accent: #7C3AED;
   --color-accent-hover: #6D28D9;
 
+  /* Jaune — touche de couleur (footer) */
+  --color-yellow: #FACC15;
+  --color-yellow-hover: #EAB308;
+
   /* Feedback */
   --color-success: #059669;
   --color-success-bg: #ECFDF5;

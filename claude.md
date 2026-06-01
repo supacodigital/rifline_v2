@@ -248,8 +248,8 @@ const createSumUpCheckout = async ({ orderId, amount, currency, customerEmail })
 ### Webhook SumUp
 - Endpoint : `POST /api/payment/webhook`
 - Vérifier la signature du webhook avec `SUMUP_WEBHOOK_SECRET`
-- Mettre à jour `orders.status` → `'paid'` si `event_type === 'CHECKOUT_COMPLETED'`
-- Déclencher la création d'expédition Sendcloud après confirmation paiement
+- Mettre à jour `orders.status` → `'processing'` (commande à préparer) si `event_type === 'CHECKOUT_COMPLETED'`
+- **Pas de création d'expédition automatique** : l'étiquette n'est pas générée via l'API (voir section 9). L'admin expédie et saisit le suivi manuellement.
 
 ### Statuts commande
 ```
@@ -261,15 +261,20 @@ pending → paid → processing → shipped → delivered
 
 ## 9. Intégration Sendcloud
 
+> ⚠️ **Le client ne souscrit pas à l'abonnement Sendcloud** permettant la génération automatique des bordereaux/étiquettes via l'API.
+> Sendcloud est utilisé **uniquement** pour récupérer et afficher les transporteurs et tarifs de livraison (`GET shipping_methods`, sans abonnement).
+> La création de colis (`POST /api/v2/parcels`) et la génération d'étiquette via l'API **ne sont pas utilisées**. L'expédition et la saisie du numéro de suivi sont **manuelles** côté admin.
+
 ### Authentification
 - Basic Auth : `SENDCLOUD_PUBLIC_KEY:SENDCLOUD_SECRET_KEY`
 - Base URL : `https://panel.sendcloud.sc/api/v2/`
 
-### Flux d'expédition
-1. Après paiement confirmé (webhook SumUp), appeler `POST /api/v2/parcels`
-2. Récupérer le `tracking_number` et l'URL d'étiquette PDF
-3. Sauvegarder en base : `orders.tracking_number`, `orders.label_url`
-4. Mettre à jour statut commande → `processing`
+### Flux d'expédition (manuel)
+1. Au checkout (et côté admin), `GET /api/v2/shipping_methods` sert à afficher les transporteurs/tarifs disponibles
+2. Après paiement confirmé (webhook SumUp), la commande passe en statut `processing` (à préparer)
+3. L'admin expédie la commande manuellement (étiquette générée hors API : panel Sendcloud, La Poste, etc.)
+4. L'admin saisit le numéro de suivi via `PUT /api/admin/orders/:id/tracking` → enregistre `orders.tracking_number`, passe le statut à `shipped` et déclenche l'email de notification au client
+5. Les colonnes `orders.label_url` et `orders.sendcloud_parcel_id` restent dans le schéma mais ne sont pas alimentées automatiquement
 
 ### Récupération méthodes de livraison (sendcloud.service.js)
 ```js
@@ -291,44 +296,7 @@ const getShippingMethods = async ({ weight, toCountry }) => {
 };
 ```
 
-### Création de colis
-```js
-const createParcel = async ({ order, shippingMethodId }) => {
-  const auth = Buffer.from(
-    `${process.env.SENDCLOUD_PUBLIC_KEY}:${process.env.SENDCLOUD_SECRET_KEY}`
-  ).toString('base64');
-
-  const response = await fetch('https://panel.sendcloud.sc/api/v2/parcels', {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${auth}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      parcel: {
-        name: `${order.firstName} ${order.lastName}`,
-        address: order.address,
-        city: order.city,
-        postal_code: order.postalCode,
-        country: order.country,
-        email: order.email,
-        telephone: order.phone,
-        order_number: `ORDER-${order.id}`,
-        weight: order.totalWeight,
-        shipment: { id: shippingMethodId },
-        request_label: true,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(`Sendcloud parcel échoué (${response.status}): ${JSON.stringify(error)}`);
-  }
-
-  return response.json();
-};
-```
+> Note : il n'existe **pas** de fonction `createParcel` / appel `POST /parcels` dans le service Sendcloud — la génération d'étiquette via l'API n'est pas utilisée (voir l'encadré en tête de section).
 
 ---
 
