@@ -210,7 +210,11 @@ exports.forgotPassword = async (req, res, next) => {
     await userRepository.setResetToken(user.id, token, expiresAt);
 
     const resetUrl = `${process.env.APP_URL}/compte/reinitialiser-mot-de-passe?token=${token}`;
-    await emailService.sendPasswordReset({ email: user.email, resetUrl });
+    // Envoi non-bloquant : un échec SMTP ne doit pas renvoyer une 500 au client.
+    // Le jeton est déjà enregistré ; l'erreur est loggée par le service email.
+    emailService.sendPasswordReset({ email: user.email, resetUrl }).catch((err) => {
+      console.error(`[auth] Échec d'envoi du mail de réinitialisation à ${user.email} :`, err.message);
+    });
 
     res.json({ message: 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.' });
   } catch (err) {
