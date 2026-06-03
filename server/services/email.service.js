@@ -23,12 +23,45 @@ const formatDate = (d) =>
   d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
 const send = async (options) => {
-  if (!isConfigured()) return;
+  if (!isConfigured()) {
+    // SMTP non configuré : on signale dans les logs au lieu d'ignorer silencieusement
+    console.warn(
+      `[email] Envoi ignoré (SMTP non configuré) → "${options.subject}" pour ${options.to}. ` +
+        'Vérifier SMTP_HOST / SMTP_USER / SMTP_PASS dans les variables d\'environnement.'
+    );
+    return;
+  }
   const transporter = createTransporter();
-  await transporter.sendMail({
-    from: `"RifLine" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
-    ...options,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: `"RifLine" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      ...options,
+    });
+    console.log(`[email] Envoyé "${options.subject}" → ${options.to} (id: ${info.messageId})`);
+  } catch (err) {
+    // L'erreur est loggée mais propagée pour ne pas masquer un problème SMTP
+    console.error(`[email] Échec d'envoi "${options.subject}" → ${options.to} :`, err.message);
+    throw err;
+  }
+};
+
+// Vérifie la configuration et la connexion SMTP (utilisé par le script de diagnostic)
+exports.verifyConnection = async () => {
+  if (!isConfigured()) {
+    return {
+      configured: false,
+      ok: false,
+      message:
+        'SMTP non configuré : une des variables SMTP_HOST / SMTP_USER / SMTP_PASS est vide.',
+    };
+  }
+  const transporter = createTransporter();
+  try {
+    await transporter.verify();
+    return { configured: true, ok: true, message: 'Connexion SMTP réussie.' };
+  } catch (err) {
+    return { configured: true, ok: false, message: err.message };
+  }
 };
 
 exports.sendPasswordReset = async ({ email, resetUrl }) => {
