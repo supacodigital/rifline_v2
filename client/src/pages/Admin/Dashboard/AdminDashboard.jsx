@@ -91,7 +91,7 @@ const AdminDashboard = () => {
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoKey}>Livraison</span>
-              <span className={styles.infoVal}>Sendcloud</span>
+              <span className={styles.infoVal}>Standard · suivi manuel</span>
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoKey}>Hébergement</span>

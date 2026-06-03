@@ -152,8 +152,8 @@ const OrderDetail = ({ orderId, onClose }) => {
               <div className={styles.detailBlock}>
                 <div className={styles.detailBlockTitleRow}>
                   <div className={styles.detailBlockTitle}><MapPin size={14} />Livraison</div>
-                  <button className={styles.copyBtn} onClick={handleCopyShippingInfo} title="Copier les infos pour Sendcloud">
-                    {copied ? <><ClipboardCheck size={13} />Copié !</> : <><Copy size={13} />Copier pour Sendcloud</>}
+                  <button className={styles.copyBtn} onClick={handleCopyShippingInfo} title="Copier l'adresse de livraison">
+                    {copied ? <><ClipboardCheck size={13} />Copié !</> : <><Copy size={13} />Copier l'adresse</>}
                   </button>
                 </div>
                 <div className={styles.addressBlock}>
@@ -175,12 +175,12 @@ const OrderDetail = ({ orderId, onClose }) => {
                 </div>
               </div>
 
-              {/* Expédition — bordereau généré manuellement (pas d'abonnement Sendcloud). */}
+              {/* Expédition — bordereau généré manuellement par l'admin. */}
               <div className={styles.detailBlock}>
                 <div className={styles.detailBlockTitle}><Truck size={14} />Expédition</div>
 
                 <div className={styles.trackingHint}>
-                  Générez l'étiquette manuellement (panel Sendcloud, La Poste…), puis saisissez le
+                  Générez l'étiquette manuellement (La Poste, transporteur…), puis saisissez le
                   numéro de suivi ci-dessous. La commande passera automatiquement en « Expédiée »
                   et le client recevra une notification.
                 </div>

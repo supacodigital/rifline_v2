@@ -125,6 +125,13 @@ exports.updateCheckoutId = async (orderId, checkoutId) => {
   await pool.query('UPDATE orders SET sumup_checkout_id = ? WHERE id = ?', [checkoutId, orderId]);
 };
 
+// Supprime une commande encore en 'pending' (les order_items partent en cascade).
+// Utilisé pour ne pas laisser de commande orpheline si la création du checkout
+// SumUp échoue juste après la création de la commande.
+exports.deletePending = async (orderId) => {
+  await pool.query("DELETE FROM orders WHERE id = ? AND status = 'pending'", [orderId]);
+};
+
 // Décrémente le stock des produits d'une commande, à appeler une fois le paiement confirmé.
 // Décrémentation atomique (WHERE stock >= quantity) pour éviter les surventes en cas de
 // paiements concurrents. Retourne la liste des produits dont le stock était insuffisant.
