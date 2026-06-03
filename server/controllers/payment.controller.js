@@ -1,5 +1,4 @@
 const { validationResult } = require('express-validator');
-const crypto = require('crypto');
 const sumupService = require('../services/sumup.service');
 const emailService = require('../services/email.service');
 const orderRepository = require('../repositories/order.repository');
@@ -75,67 +74,70 @@ exports.createCheckout = async (req, res, next) => {
 
 exports.handleWebhook = async (req, res, next) => {
   try {
-    const signature = req.headers['sumup-signature'];
+    // SumUp POST sur cette URL un payload minimal { event_type, id } lors d'un
+    // changement de statut. Ce webhook n'est PAS signé : la source de vérité est
+    // le rappel authentifié GET /checkouts/{id}, qui seul confirme le statut réel.
     const rawBody = req.body;
-
-    // Vérification obligatoire de la signature webhook
-    if (!process.env.SUMUP_WEBHOOK_SECRET) {
-      return res.status(500).json({ error: 'Configuration webhook manquante.' });
-    }
-
-    const expectedSig = crypto
-      .createHmac('sha256', process.env.SUMUP_WEBHOOK_SECRET)
-      .update(rawBody)
-      .digest('hex');
-
-    if (signature !== `sha256=${expectedSig}`) {
-      return res.status(401).json({ error: 'Signature webhook invalide.' });
-    }
-
     const event = Buffer.isBuffer(rawBody) || typeof rawBody === 'string'
       ? JSON.parse(rawBody)
       : rawBody;
 
-    if (event.event_type === 'CHECKOUT_COMPLETED') {
-      const checkoutId = event.payload?.id;
-      const transactionId = event.payload?.transaction_id;
-
-      const order = await orderRepository.findByCheckoutId(checkoutId);
-      if (!order) {
-        return res.status(404).json({ error: 'Commande introuvable.' });
-      }
-
-      // Idempotence : SumUp peut rejouer le webhook. On ne traite que les commandes
-      // encore en 'pending' pour ne pas décrémenter le stock ni renvoyer l'email deux fois.
-      if (order.status !== 'pending') {
-        return res.json({ received: true });
-      }
-
-      // Décrémentation du stock à la confirmation du paiement (pas à la création de la
-      // commande, pour ne pas bloquer le stock sur les paniers abandonnés).
-      const { insufficient } = await orderRepository.decrementStock(order.id);
-      if (insufficient.length && process.env.NODE_ENV !== 'production') {
-        console.error(
-          `[Stock] Commande #${order.id} payée mais stock insuffisant pour : ` +
-          insufficient.map((p) => `${p.productName} (x${p.quantity})`).join(', ')
-        );
-      }
-
-      // Paiement confirmé → commande à préparer.
-      // L'étiquette/bordereau n'est pas générée automatiquement (pas d'abonnement Sendcloud) :
-      // l'expédition et la saisie du numéro de suivi sont gérées manuellement par l'admin.
-      await orderRepository.updateStatus(order.id, 'processing', { transactionId, paidAt: new Date() });
-
-      // Email de confirmation en arrière-plan
-      const paidOrder = await orderRepository.findById(order.id);
-      emailService.sendOrderConfirmation({ order: paidOrder }).catch((err) => {
-        if (process.env.NODE_ENV !== 'production') {
-          console.error(`[Email] Erreur confirmation commande #${order.id}:`, err.message);
-        }
-      });
+    const checkoutId = event.id;
+    if (!checkoutId) {
+      // Payload inattendu : on acquitte quand même en 2xx pour éviter les retries SumUp.
+      return res.status(200).json({ received: true });
     }
 
-    res.json({ received: true });
+    // Confirmation du statut réel auprès de SumUp (on ne fait jamais confiance au
+    // contenu du webhook). Si l'appel échoue, on renvoie une 5xx pour que SumUp
+    // rejoue la notification plus tard.
+    const checkout = await sumupService.getCheckout(checkoutId);
+
+    // On ne traite que les paiements réellement aboutis.
+    if (checkout.status !== 'PAID') {
+      return res.status(200).json({ received: true });
+    }
+
+    const order = await orderRepository.findByCheckoutId(checkoutId);
+    if (!order) {
+      // Commande introuvable : on acquitte pour ne pas boucler sur les retries.
+      return res.status(200).json({ received: true });
+    }
+
+    // Idempotence : SumUp peut rejouer la notification. On ne traite que les
+    // commandes encore en 'pending' pour ne pas décrémenter le stock ni renvoyer
+    // l'email de confirmation deux fois.
+    if (order.status !== 'pending') {
+      return res.status(200).json({ received: true });
+    }
+
+    // Décrémentation du stock à la confirmation du paiement (pas à la création de la
+    // commande, pour ne pas bloquer le stock sur les paniers abandonnés).
+    const { insufficient } = await orderRepository.decrementStock(order.id);
+    if (insufficient.length && process.env.NODE_ENV !== 'production') {
+      console.error(
+        `[Stock] Commande #${order.id} payée mais stock insuffisant pour : ` +
+        insufficient.map((p) => `${p.productName} (x${p.quantity})`).join(', ')
+      );
+    }
+
+    // Paiement confirmé → commande à préparer.
+    // L'étiquette/bordereau n'est pas générée automatiquement (pas d'abonnement Sendcloud) :
+    // l'expédition et la saisie du numéro de suivi sont gérées manuellement par l'admin.
+    await orderRepository.updateStatus(order.id, 'processing', {
+      transactionId: checkout.transaction_id,
+      paidAt: new Date(),
+    });
+
+    // Email de confirmation en arrière-plan
+    const paidOrder = await orderRepository.findById(order.id);
+    emailService.sendOrderConfirmation({ order: paidOrder }).catch((err) => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(`[Email] Erreur confirmation commande #${order.id}:`, err.message);
+      }
+    });
+
+    res.status(200).json({ received: true });
   } catch (err) {
     next(err);
   }
