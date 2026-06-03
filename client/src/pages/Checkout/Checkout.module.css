@@ -99,6 +99,11 @@
   color: var(--color-text);
 }
 
+/* Titre de section secondaire (mode de livraison) sur la page unique : espace par rapport au bloc adresse. */
+.sectionTitleSpaced {
+  margin-top: var(--spacing-8);
+}
+
 .errorBanner {
   display: flex;
   align-items: center;

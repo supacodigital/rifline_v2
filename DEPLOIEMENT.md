@@ -8,7 +8,7 @@
 
 - [x] **Tester le paiement SumUp dans le navigateur** — ✅ flux validé en E2E (accueil → panier → checkout → redirection SumUp réelle)
 - [x] **Tester le webhook SumUp** — ✅ validé via webhook signé simulé (signature HMAC, passage `processing`, décrément stock, idempotence)
-- [x] **Décider pour Sendcloud** — ✅ pas d'abonnement : Sendcloud sert uniquement à afficher les transporteurs, génération d'étiquette retirée, suivi saisi manuellement par l'admin
+- [x] **Décider pour Sendcloud** — ✅ Sendcloud entièrement retiré du projet. Livraison standard unique à 5,90 € (montant fixe), suivi saisi manuellement par l'admin. Plus de récupération de transporteurs via API, plus de widget Mondial Relay.
 - [ ] **Renseigner les secrets JWT dans cPanel** — utiliser les valeurs générées ci-dessous (NE PAS committer). Le `.env` local garde encore les valeurs `change_me_…`, ce qui est sans risque en local, mais en prod il FAUT ces secrets forts :
   ```
   JWT_SECRET=EKJhKpWGYbFOawNbX7vyClyiN9gArlD1qLNYmaGErIUd27YF7CL9OX9yhZRnzbXc
@@ -280,9 +280,6 @@ SUMUP_API_KEY=sk_live_XXXX            # sk_live pour encaisser réellement, sk_t
 SUMUP_MERCHANT_CODE=VOTRE_CODE_MARCHAND
 SUMUP_WEBHOOK_SECRET=VOTRE_SECRET_WEBHOOK
 
-SENDCLOUD_PUBLIC_KEY=VOTRE_CLE_PUBLIQUE
-SENDCLOUD_SECRET_KEY=VOTRE_CLE_SECRETE
-
 APP_URL=https://rif-line.com
 SERVER_URL=https://api.rif-line.com
 
@@ -326,7 +323,6 @@ Phusion Passenger gère le process — pas besoin de PM2 en production.
 Créer/modifier `client/.env.production` :
 ```env
 VITE_API_URL=https://api.rif-line.com/api
-VITE_MONDIAL_RELAY_KEY=     # clé Mondial Relay (vide = clé de démo BDTEST13)
 ```
 
 > ⚠️ Ces variables `VITE_*` sont **figées au moment du `npm run build`** : elles
@@ -352,7 +348,19 @@ Via FTP/SFTP, uploader **le contenu** de `client/dist/` dans :
 
 ### 4.4 Configurer Apache pour le routing React
 
-Créer un fichier `.htaccess` dans `public_html/` :
+Ce fichier est essentiel pour que React Router fonctionne — sans lui, un refresh sur
+`/catalogue` retourne une **404 Apache** (seule la home `/` fonctionne).
+
+✅ **Plus rien à faire manuellement** : le `.htaccess` est versionné dans
+`client/public/.htaccess`. Vite le copie automatiquement dans `dist/` à chaque
+`npm run build`. Il part donc avec votre upload FTP.
+
+> ⚠️ **Attention à l'upload FTP** : les fichiers commençant par un point (`.htaccess`)
+> sont masqués par défaut dans la plupart des clients FTP. Activez l'affichage des
+> fichiers cachés (FileZilla : Serveur → Forcer l'affichage des fichiers cachés)
+> pour bien transférer le `.htaccess` vers `public_html/`.
+
+Contenu (pour référence — règle SPA + compression gzip + cache long sur les assets hashés) :
 ```apache
 Options -MultiViews
 RewriteEngine On
@@ -360,8 +368,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [QSA,L]
 ```
-
-Ce fichier est essentiel pour que React Router fonctionne — sans lui, un refresh sur `/catalogue` retourne une 404.
 
 ---
 
@@ -391,12 +397,11 @@ Dans cPanel → **SSL/TLS** → **Let's Encrypt** :
 4. Récupérer le `merchant_code` dans les paramètres du compte
 5. Renseigner `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `SUMUP_WEBHOOK_SECRET` dans les variables d'environnement
 
-### 6.2 Sendcloud
+### 6.2 Livraison
 
-1. Créer un compte sur [sendcloud.com](https://sendcloud.com)
-2. Dans Settings → API → générer Public Key et Secret Key
-3. Dans Settings → Shipping → configurer les transporteurs souhaités (Colissimo, Chronopost, etc.)
-4. Renseigner `SENDCLOUD_PUBLIC_KEY` et `SENDCLOUD_SECRET_KEY` dans les variables d'environnement
+Pas de service tiers à configurer. La livraison est une **option standard unique à 5,90 €**
+(montant fixe, affiché directement au checkout). L'admin génère l'étiquette manuellement
+(panel transporteur, La Poste…) puis saisit le numéro de suivi dans le back-office.
 
 ---
 
@@ -418,7 +423,7 @@ Dans cPanel → **SSL/TLS** → **Let's Encrypt** :
 - [ ] `client/.env.production` contient `VITE_API_URL=https://api.rif-line.com/api`
 - [ ] `npm run build` exécuté en local sans erreur
 - [ ] Contenu de `dist/` uploadé dans `public_html/`
-- [ ] Fichier `.htaccess` présent dans `public_html/`
+- [ ] Fichier `.htaccess` bien transféré dans `public_html/` (afficher les fichiers cachés dans le client FTP)
 
 ### Tests post-déploiement
 
@@ -428,7 +433,7 @@ Dans cPanel → **SSL/TLS** → **Let's Encrypt** :
 - [ ] Connexion admin fonctionne (`/compte/connexion`)
 - [ ] Ajout d'un produit avec image fonctionne
 - [ ] Checkout → redirection SumUp fonctionne
-- [ ] Webhook SumUp reçu et commande passée en `paid`
+- [ ] Webhook SumUp reçu et commande passée en `processing`
 
 ---
 
@@ -505,8 +510,6 @@ Il n'y a pas de système de migration automatique. Pour chaque modification de s
 | `SUMUP_API_KEY` | `sk_test_XXXX` | `sk_live_XXXX` | Clé SumUp |
 | `SUMUP_MERCHANT_CODE` | — | code marchand | Code marchand SumUp |
 | `SUMUP_WEBHOOK_SECRET` | — | secret webhook | Validation webhooks |
-| `SENDCLOUD_PUBLIC_KEY` | clé test | clé prod | Clé publique Sendcloud |
-| `SENDCLOUD_SECRET_KEY` | clé test | clé prod | Clé secrète Sendcloud |
 | `APP_URL` | `http://localhost:5173` | `https://rif-line.com` | URL frontend (CORS + redirects SumUp) |
 | `SERVER_URL` | `http://localhost:3000` | `https://api.rif-line.com` | URL API (URLs absolues des images) |
 | `SMTP_HOST` | vide | hôte SMTP | Email (vide = notifications désactivées) |
@@ -521,4 +524,3 @@ Il n'y a pas de système de migration automatique. Pour chaque modification de s
 | Variable | Dev | Prod | Description |
 |----------|-----|------|-------------|
 | `VITE_API_URL` | `http://localhost:3000/api` | `https://api.rif-line.com/api` | URL de l'API consommée par le front |
-| `VITE_MONDIAL_RELAY_KEY` | vide (démo `BDTEST13`) | clé Mondial Relay | Widget point relais au checkout |

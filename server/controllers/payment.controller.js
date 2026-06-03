@@ -50,13 +50,20 @@ exports.createCheckout = async (req, res, next) => {
       shippingMethodId: shippingMethodId || null,
     });
 
-    // Création du checkout SumUp
-    const checkout = await sumupService.createCheckout({
-      orderId,
-      amount: totalAmount,
-      currency: 'EUR',
-      customerEmail: customerEmail || shippingAddress.email,
-    });
+    // Création du checkout SumUp. Si elle échoue, on supprime la commande tout juste
+    // créée pour ne pas laisser de commande orpheline en 'pending' sans checkout_id.
+    let checkout;
+    try {
+      checkout = await sumupService.createCheckout({
+        orderId,
+        amount: totalAmount,
+        currency: 'EUR',
+        customerEmail: customerEmail || shippingAddress.email,
+      });
+    } catch (err) {
+      await orderRepository.deletePending(orderId).catch(() => {});
+      throw err;
+    }
 
     await orderRepository.updateCheckoutId(orderId, checkout.id);
 

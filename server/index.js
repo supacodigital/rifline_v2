@@ -12,7 +12,6 @@ const productRoutes = require('./routes/products.routes');
 const orderRoutes = require('./routes/orders.routes');
 const cartRoutes = require('./routes/cart.routes');
 const paymentRoutes = require('./routes/payment.routes');
-const shippingRoutes = require('./routes/shipping.routes');
 const categoryRoutes = require('./routes/categories.routes');
 const adminRoutes = require('./routes/admin.routes');
 
@@ -64,7 +63,6 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/payment', paymentRoutes);
-app.use('/api/shipping', shippingRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use(errorHandler);
@@ -122,7 +120,6 @@ if (process.env.NODE_ENV !== 'test') {
       ['POST/GET', '/api/orders/*'],
       ['POST/GET', '/api/cart/*'],
       ['POST',     '/api/payment/*'],
-      ['GET',      '/api/shipping/*'],
       ['*',        '/api/admin/*'],
     ];
     routes.forEach(([method, path]) => {
@@ -152,7 +149,6 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(dim(`  ${line}`));
     console.log(row('SMTP',      process.env.SMTP_HOST ? green(`✓ ${process.env.SMTP_HOST}`) : yellow('⚠ non configuré')));
     console.log(row('SumUp',     process.env.SUMUP_API_KEY ? green('✓ clé présente') : yellow('⚠ non configuré')));
-    console.log(row('Sendcloud', process.env.SENDCLOUD_PUBLIC_KEY ? green('✓ clé présente') : yellow('⚠ non configuré')));
     console.log('');
     console.log(dim(`  ${line}`));
     console.log('');

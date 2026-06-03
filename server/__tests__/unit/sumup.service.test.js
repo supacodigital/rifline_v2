@@ -38,7 +38,9 @@ describe('sumup.service — createCheckout', () => {
     expect(options.headers['Authorization']).toBe('Bearer sk_test_fake');
 
     const body = JSON.parse(options.body);
-    expect(body.checkout_reference).toBe('ORDER-1');
+    // La référence est suffixée d'un horodatage pour garantir l'unicité exigée par
+    // SumUp (évite les conflits 409 sur une reprise de paiement) : ORDER-{id}-{timestamp}
+    expect(body.checkout_reference).toMatch(/^ORDER-1-\d+$/);
     expect(body.amount).toBe(49.99);
     expect(body.currency).toBe('EUR');
     expect(body.hosted_checkout.enabled).toBe(true);
