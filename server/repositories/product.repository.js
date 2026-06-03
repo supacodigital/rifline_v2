@@ -28,8 +28,23 @@ exports.findAll = async ({ page, limit, category, search, sort = 'newest', minPr
     conditions.push('p.stock > 0 AND p.stock <= 5');
   }
   if (category) {
-    conditions.push('(c.slug = ? OR c.id = ?)');
-    params.push(category, category);
+    // On filtre sur la catégorie sélectionnée ET ses sous-catégories : un produit
+    // rangé dans une sous-catégorie (ex. « Parfums hommes ») doit apparaître quand on
+    // clique sur la catégorie parente (ex. « Parfums »). `category` peut arriver en
+    // slug ou en id ; on résout d'abord l'id de la catégorie sélectionnée, puis on
+    // inclut les produits dont la catégorie est cette catégorie ou un de ses enfants.
+    conditions.push(`(
+      p.category_id IN (
+        SELECT sel.id FROM categories sel WHERE sel.slug = ? OR sel.id = ?
+      )
+      OR p.category_id IN (
+        SELECT child.id FROM categories child
+        WHERE child.parent_id IN (
+          SELECT sel2.id FROM categories sel2 WHERE sel2.slug = ? OR sel2.id = ?
+        )
+      )
+    )`);
+    params.push(category, category, category, category);
   }
   if (search) {
     conditions.push('(p.name LIKE ? OR p.sku LIKE ?)');
