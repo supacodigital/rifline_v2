@@ -122,8 +122,8 @@ exports.handleWebhook = async (req, res, next) => {
     }
 
     // Paiement confirmé → commande à préparer.
-    // L'étiquette/bordereau n'est pas générée automatiquement (pas d'abonnement Sendcloud) :
-    // l'expédition et la saisie du numéro de suivi sont gérées manuellement par l'admin.
+    // L'étiquette/bordereau n'est pas générée automatiquement : l'expédition et la
+    // saisie du numéro de suivi sont gérées manuellement par l'admin.
     await orderRepository.updateStatus(order.id, 'processing', {
       transactionId: checkout.transaction_id,
       paidAt: new Date(),

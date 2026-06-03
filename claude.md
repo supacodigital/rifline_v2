@@ -13,7 +13,7 @@ Déployé sur **O2switch** (forfait cloud mutualisé) avec **Phusion Passenger**
 - Catalogue produits multi-catégories
 - Panier d'achat persistant
 - Paiement via **SumUp** (Hosted Checkout)
-- Livraison via **Sendcloud** (API REST multi-transporteurs)
+- Livraison standard à montant fixe (5,90 €), suivi saisi manuellement par l'admin
 - Espace client (inscription, connexion, suivi commandes)
 - Back-office admin (gestion produits, commandes, stocks)
 
@@ -32,7 +32,7 @@ Déployé sur **O2switch** (forfait cloud mutualisé) avec **Phusion Passenger**
 | Hash mdp     | `bcrypt`                               |
 | Validation   | `express-validator`                    |
 | Paiement     | SumUp Hosted Checkout API              |
-| Livraison    | Sendcloud REST API                     |
+| Livraison    | Montant fixe (5,90 €), suivi manuel    |
 | Hébergement  | O2switch cloud — Phusion Passenger     |
 | Process manager | PM2 (développement uniquement)      |
 | Reverse proxy | Nginx + Certbot (SSL)                 |
@@ -63,7 +63,7 @@ routes → controllers → services → repositories
 ```
 - `routes/` : définition des endpoints Express, validation légère
 - `controllers/` : gestion req/res, appel aux services
-- `services/` : logique métier, appels APIs externes (SumUp, Sendcloud)
+- `services/` : logique métier, appels APIs externes (SumUp)
 - `repositories/` : requêtes SQL directes, pas d'ORM
 
 ### Validation (express-validator)
@@ -131,13 +131,11 @@ routes → controllers → services → repositories
 │   │   ├── products.routes.js
 │   │   ├── orders.routes.js
 │   │   ├── cart.routes.js
-│   │   ├── payment.routes.js      # SumUp webhooks + checkout
-│   │   ├── shipping.routes.js     # Sendcloud
+│   │   ├── payment.routes.js      # SumUp webhook + checkout
 │   │   └── admin.routes.js
 │   ├── controllers/
 │   ├── services/
-│   │   ├── sumup.service.js       # Création checkout SumUp
-│   │   └── sendcloud.service.js   # Création expédition Sendcloud
+│   │   └── sumup.service.js       # Création + lecture checkout SumUp
 │   ├── repositories/
 │   ├── middlewares/
 │   │   ├── auth.middleware.js     # Vérification JWT
@@ -172,13 +170,9 @@ JWT_SECRET=
 JWT_REFRESH_SECRET=
 
 # SumUp
-SUMUP_API_KEY=                    # sk_live_XXXX ou sk_test_XXXX
+SUMUP_API_KEY=                    # clé API secrète sup_sk_... (sandbox ou production)
 SUMUP_MERCHANT_CODE=              # Code marchand SumUp
-SUMUP_WEBHOOK_SECRET=             # Secret pour valider les webhooks
-
-# Sendcloud
-SENDCLOUD_PUBLIC_KEY=
-SENDCLOUD_SECRET_KEY=
+# Pas de secret webhook : la confirmation de paiement se fait via GET /checkouts/{id}
 
 # App
 APP_URL=https://rif-line.com   # URL publique du site (utilisée dans les redirects SumUp et le CORS)
@@ -246,10 +240,11 @@ const createSumUpCheckout = async ({ orderId, amount, currency, customerEmail })
 ```
 
 ### Webhook SumUp
-- Endpoint : `POST /api/payment/webhook`
-- Vérifier la signature du webhook avec `SUMUP_WEBHOOK_SECRET`
-- Mettre à jour `orders.status` → `'processing'` (commande à préparer) si `event_type === 'CHECKOUT_COMPLETED'`
-- **Pas de création d'expédition automatique** : l'étiquette n'est pas générée via l'API (voir section 9). L'admin expédie et saisit le suivi manuellement.
+- Endpoint : `POST /api/payment/webhook` (passé en `return_url` à la création du checkout)
+- SumUp envoie un payload minimal `{ event_type: 'CHECKOUT_STATUS_CHANGED', id }` — **non signé**
+- Source de vérité : rappeler `GET /v0.1/checkouts/{id}` et ne traiter que si `status === 'PAID'` (pas de secret webhook)
+- Mettre alors `orders.status` → `'processing'` (commande à préparer), décrémenter le stock, envoyer l'email — le tout idempotent
+- **Pas de création d'expédition automatique** : l'admin expédie et saisit le suivi manuellement (voir section 9).
 
 ### Statuts commande
 ```
@@ -259,44 +254,17 @@ pending → paid → processing → shipped → delivered
 
 ---
 
-## 9. Intégration Sendcloud
+## 9. Livraison (manuelle, sans API tierce)
 
-> ⚠️ **Le client ne souscrit pas à l'abonnement Sendcloud** permettant la génération automatique des bordereaux/étiquettes via l'API.
-> Sendcloud est utilisé **uniquement** pour récupérer et afficher les transporteurs et tarifs de livraison (`GET shipping_methods`, sans abonnement).
-> La création de colis (`POST /api/v2/parcels`) et la génération d'étiquette via l'API **ne sont pas utilisées**. L'expédition et la saisie du numéro de suivi sont **manuelles** côté admin.
-
-### Authentification
-- Basic Auth : `SENDCLOUD_PUBLIC_KEY:SENDCLOUD_SECRET_KEY`
-- Base URL : `https://panel.sendcloud.sc/api/v2/`
+> ℹ️ **Aucune intégration transporteur** (Sendcloud retiré du projet). La livraison est
+> une **option standard unique à 5,90 €** (montant fixe), affichée directement au checkout.
 
 ### Flux d'expédition (manuel)
-1. Au checkout (et côté admin), `GET /api/v2/shipping_methods` sert à afficher les transporteurs/tarifs disponibles
-2. Après paiement confirmé (webhook SumUp), la commande passe en statut `processing` (à préparer)
-3. L'admin expédie la commande manuellement (étiquette générée hors API : panel Sendcloud, La Poste, etc.)
-4. L'admin saisit le numéro de suivi via `PUT /api/admin/orders/:id/tracking` → enregistre `orders.tracking_number`, passe le statut à `shipped` et déclenche l'email de notification au client
-5. Les colonnes `orders.label_url` et `orders.sendcloud_parcel_id` restent dans le schéma mais ne sont pas alimentées automatiquement
-
-### Récupération méthodes de livraison (sendcloud.service.js)
-```js
-const getShippingMethods = async ({ weight, toCountry }) => {
-  const auth = Buffer.from(
-    `${process.env.SENDCLOUD_PUBLIC_KEY}:${process.env.SENDCLOUD_SECRET_KEY}`
-  ).toString('base64');
-
-  const response = await fetch(
-    `https://panel.sendcloud.sc/api/v2/shipping_methods?to_country=${toCountry}&weight=${weight}`,
-    { headers: { Authorization: `Basic ${auth}` } }
-  );
-
-  if (!response.ok) {
-    throw new Error(`Sendcloud shipping_methods échoué (${response.status})`);
-  }
-
-  return response.json();
-};
-```
-
-> Note : il n'existe **pas** de fonction `createParcel` / appel `POST /parcels` dans le service Sendcloud — la génération d'étiquette via l'API n'est pas utilisée (voir l'encadré en tête de section).
+1. Au checkout, le montant de livraison est fixe (5,90 €) — pas d'appel API pour récupérer des tarifs.
+2. Après paiement confirmé (webhook SumUp), la commande passe en statut `processing` (à préparer).
+3. L'admin génère l'étiquette manuellement (hors application : La Poste, transporteur…).
+4. L'admin saisit le numéro de suivi via `PUT /api/admin/orders/:id/tracking` → enregistre `orders.tracking_number`, passe le statut à `shipped` et déclenche l'email de notification au client.
+5. Les colonnes `orders.label_url` et `orders.sendcloud_parcel_id` subsistent dans le schéma (historique) mais ne sont jamais alimentées.
 
 ---
 
@@ -336,7 +304,7 @@ CREATE TABLE products (
   price DECIMAL(10, 2) NOT NULL,
   compare_price DECIMAL(10, 2) DEFAULT NULL, -- prix barré
   stock INT DEFAULT 0,
-  weight DECIMAL(8, 3) DEFAULT 0, -- en kg pour Sendcloud
+  weight DECIMAL(8, 3) DEFAULT 0, -- en kg (indicatif, pour l'expédition manuelle)
   sku VARCHAR(100),
   category_id INT,
   is_active BOOLEAN DEFAULT TRUE,
